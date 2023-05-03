@@ -93,9 +93,10 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
         printf("[ 1 ] Alugar meio de Mobilidade Eletrica\n");
         printf("[ 2 ] Listar meios disponiveis (Ordem decrescente de autonomia)\n");
         printf("[ 3 ] Listar meios disponiveis por Geocode\n");
-        printf("[ 4 ] Alterar dados cliente\n");
-        printf("[ 5 ] Carregar Saldo\n");
-        printf("[ 6 ] Guardar clientes\n");
+        printf("[ 4 ] Listar meios disponiveis proximos via Geocode \n");
+        printf("[ 5 ] Alterar dados cliente\n");
+        printf("[ 6 ] Carregar Saldo\n");
+        printf("[ 7 ] Guardar clientes\n");
         printf("[ 0 ] Sair\n\n");
         printf("Opcao: ");
         scanf("%d", &escolha);
@@ -120,17 +121,22 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
             any_key();
             break;
 
-        case 4:
+        case 4: 
+            listar_meios_proximos(*meios); 
+            any_key();
+            break;
+
+        case 5:
             alterar_dados_proprio_cliente(utilizadores, auth);
             any_key();
             break;
             
-        case 5:
+        case 6:
             carregar_saldo(auth, utilizadores);
             any_key();
             break;
 
-        case 6: 
+        case 7: 
             guardar_users(*utilizadores);
             printf("Utilizadores guardados com sucesso!\n");
             any_key();
