@@ -308,8 +308,8 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
 
         printf("[1] Registar Meio de Mobilidade\n");
         printf("[2] Alterar dados de meio\n");
-        printf("[3] Listar Meios disponiveis (Ordem decrescente de autonomia)\n");
-        printf("[4] Listar Meios disponiveis numa localização com geocode\n");
+        printf("[3] Listar Meios Disponiveis (Ordem decrescente de Autonomia)\n");
+        printf("[4] Listar Meios Disponiveis numa Localizacao com Geocode\n");
         printf("[5] Remover Meio\n");
         printf("[6] Guardar Meios\n");
         printf("[0] Sair\n");
@@ -658,7 +658,7 @@ void listar_meios_geocode(NODE* meios) {
     while (aux != NULL) {
         meio = (MEIO*)aux->data;
 
-        if (strcmp(meio->geocode, geocode) == 0) {
+        if (strstr(meio->geocode, geocode) != NULL) {
             printf("Codigo: %d\n", meio->codigo);
             printf("Tipo: %s\n", meio->tipo);
             printf("Autonomia: %.2f\n", meio->autonomia);
