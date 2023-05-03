@@ -422,7 +422,6 @@ int criar_gestor(NODE** utilizadores) {
     free(user);
     return -1;
 }
-
 int criar_cliente(NODE** utilizadores) {
     int opc, res;
 
@@ -486,7 +485,6 @@ int criar_cliente(NODE** utilizadores) {
     free(user);
     return -1;
 }
-
 int criar_meio(NODE** meios) {
     int opc, res;
 
@@ -649,7 +647,7 @@ void listar_meios_geocode(NODE* meios) {
     MEIO* meio = NULL;
     char geocode[100];
 
-    printf("Introduza o geocode:");
+    printf("Introduza a sua Localizacao:");
     scanf("%s", geocode);
     fflush(stdin);
 
@@ -675,6 +673,93 @@ void listar_meios_geocode(NODE* meios) {
         printf("Nenhum meio encontrado com o geocode fornecido.\n");
     }
 }
+void listar_meios_proximos(NODE* meios) {
+    NODE* aux = NULL;
+    MEIO* meio = NULL;
+    char geocode[100];
+
+    printf("Introduza a sua Localizacao:");
+    scanf("%s", geocode);
+    fflush(stdin);
+
+    int encontrou = 0;
+    aux = meios;
+    while (aux != NULL) {
+        meio = (MEIO*)aux->data;
+
+        if (strstr(meio->geocode, geocode) != NULL) {
+            printf("Codigo: %d\n", meio->codigo);
+            printf("Tipo: %s\n", meio->tipo);
+            printf("Autonomia: %.2f\n", meio->autonomia);
+            printf("Custo: %.2f\n", meio->custo);
+            printf("Localizacao: %s\n", meio->geocode);
+            printf("------------------------\n");
+            encontrou = 1;
+        }
+
+        aux = aux->next;
+    }
+
+    if (!encontrou) {
+        printf("Nenhum meio encontrado com o geocode fornecido.\n");
+        return;
+    }
+
+    int tamanho = 0;
+    aux = meios;
+    while (aux != NULL) {
+        meio = (MEIO*)aux->data;
+        if (meio->status == 0) {
+            tamanho++;
+        }
+        aux = aux->next;
+    }
+
+    if (tamanho == 0) {
+        printf("Nenhum meio disponivel!\n");
+        return;
+    }
+
+    MEIO* lista = (MEIO*)calloc(tamanho, sizeof(MEIO));
+
+    int pos = 0;
+    aux = meios;
+    while (aux != NULL) {
+        meio = (MEIO*)aux->data;
+        if (meio->status == 0) {
+            lista[pos] = *meio;
+            pos++;
+        }
+        aux = aux->next;
+    }
+
+    // Bubble sort para ordenar a lista por distância
+    for (int i = 0; i < tamanho - 1; i++) {
+        for (int j = 0; j < tamanho - i - 1; j++) {
+            double distancia1 = calcular_distancia(geocode, lista[j].geocode);
+            double distancia2 = calcular_distancia(geocode, lista[j + 1].geocode);
+            if (distancia1 > distancia2) {
+                MEIO temp = lista[j];
+                lista[j] = lista[j + 1];
+                lista[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("Meios disponiveis por proximidade:\n");
+    for (int i = 0; i < tamanho; i++) {
+        printf("Codigo: %d\n", lista[i].codigo);
+        printf("Tipo: %s\n", lista[i].tipo);
+        printf("Autonomia: %.2f\n", lista[i].autonomia);
+        printf("Custo: %.2f\n", lista[i].custo);
+        printf("Localizacao: %s\n", lista[i].geocode);
+        printf("Distancia: %.2f\n", calcular_distancia(geocode, lista[i].geocode));
+        printf("------------------------\n");
+    }
+
+    free(lista);
+}
+
 
 void alterar_dados_gestor(NODE** utilizadores) {
     int opc = 1, selected;
@@ -809,7 +894,6 @@ void alterar_dados_proprio_cliente(NODE** utilizadores, USER auth) {
     } while (selected != 0);
     guardar_users(*utilizadores);
 }
-
 void alterar_dados_cliente(NODE** utilizadores) {
     int opc, selected;
     char username[100];

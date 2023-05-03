@@ -31,7 +31,10 @@ void alterar_dados_gestor(NODE** users);
 void alterar_dados_cliente(NODE** users);
 void alterar_dados_meios(NODE** meios);
 void alterar_dados_proprio_cliente(NODE** utilizadores, USER auth);
+
 void listar_meios_geocode(NODE* meios);
+void listar_meios_proximos(NODE* meios); 
+
 void remover_cliente(NODE** utilizadores);
 void remover_meio(NODE** meios);
 
