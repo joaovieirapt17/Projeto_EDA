@@ -4,13 +4,15 @@
 #include "linkedlist.h"
 
 typedef struct {
-	int codigo; // código do meio de mobilidade elétrica
-	char tipo[50]; //Tipo de mobilidade elétrica
-	float bateria; //Bateria	
-	float autonomia; //Autonomia
-	float custo; //Custo do meio 
-	char geocode[100]; //Localização do meio
-	int status; //Status do meio de mobilidade (0 - disponível, 1 - alugado)
+    int codigo;         // código do meio de mobilidade elétrica
+    char tipo[50];      // Tipo de mobilidade elétrica
+    float bateria;      // Bateria
+    float autonomia;    // Autonomia
+    float custo;        // Custo do meio 
+    char geocode[100];  // Localização do meio
+    int status;         // Status do meio de mobilidade (0 - disponível, 1 - alugado)
+    double latitude;    // Latitude do meio
+    double longitude;   // Longitude do meio
 } MEIO;
 
 /*

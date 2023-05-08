@@ -526,6 +526,14 @@ int criar_meio(NODE** meios) {
         scanf("%s", meio->geocode);
         fflush(stdin);
 
+        printf("  | Latitude: ");
+        scanf("%f", &meio->latitude);
+        fflush(stdin);
+
+        printf("  | Longitude: ");
+        scanf("%f", &meio->longitude);
+        fflush(stdin);
+
         meio->status = 0;
 
         res = add_meio(meios, meio);
@@ -554,6 +562,7 @@ int criar_meio(NODE** meios) {
     free(meio);
     return -1;
 }
+
 
 void listar_gestores_registados(NODE* utilizadores) {
     NODE* aux = NULL;
@@ -728,7 +737,7 @@ void listar_meios_proximos(NODE* meios) {
     }
 
     int encontrou = 0;
-    printf("Meios disponiveis por proximidade:\n");
+    printf("\nMeios Proximos Disponiveis:\n");
     for (int i = 0; i < tamanho; i++) {
         if (strstr(lista[i].geocode, geocode) != NULL) {
             printf("Codigo: %d\n", lista[i].codigo);

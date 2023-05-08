@@ -10,5 +10,5 @@ Username: cliente1
 Nome: Cliente 1
 Email: cliente1@gmail.com
 NIF: 269965122
-Saldo: 100.00
+Saldo: 1000.00
 Role: 0
