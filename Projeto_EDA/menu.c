@@ -90,11 +90,11 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
         printf("|              MENU CLIENTE              |\n");
         printf("+----------------------------------------+\n\n");
 
-        printf("[ 1 ] Alugar meio de Mobilidade Eletrica\n");
-        printf("[ 2 ] Listar meios disponiveis (Ordem decrescente de autonomia)\n");
-        printf("[ 3 ] Listar meios disponiveis por Geocode\n");
-        printf("[ 4 ] Listar meios disponiveis proximos via Geocode \n");
-        printf("[ 5 ] Alterar dados cliente\n");
+        printf("[ 1 ] Alugar Meio de Mobilidade Eletrica\n");
+        printf("[ 2 ] Listar Meios Disponiveis (Ordem decrescente de autonomia)\n");
+        printf("[ 3 ] Listar Meios Disponiveis por Geocode\n");
+        printf("[ 4 ] Listar Meios Disponiveis Proximos via Geocode \n");
+        printf("[ 5 ] Alterar Dados Cliente\n");
         printf("[ 6 ] Carregar Saldo\n");
         printf("[ 7 ] Guardar clientes\n");
         printf("[ 0 ] Sair\n\n");
@@ -120,7 +120,7 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
             listar_meios_geocode(*meios);
             any_key();
             break;
-
+            
         case 4: 
             listar_meios_proximos(*meios); 
             any_key();
@@ -722,7 +722,7 @@ void listar_meios_proximos(NODE* meios) {
     }
 
     if (tamanho == 0) {
-        printf("Nenhum meio disponivel!\n");
+        printf("Nenhum Meio Disponivel!\n");
         return;
     }
 
@@ -759,7 +759,7 @@ void listar_meios_proximos(NODE* meios) {
         printf("Autonomia: %.2f\n", lista[i].autonomia);
         printf("Custo: %.2f\n", lista[i].custo);
         printf("Localizacao: %s\n", lista[i].geocode);
-        printf("Distancia: %.2f\n", calcular_distancia(geocode, lista[i].geocode));
+        printf("Distancia: %.2f\n", (float)calcular_distancia(geocode, lista[i].geocode));
         printf("------------------------\n");
     }
 

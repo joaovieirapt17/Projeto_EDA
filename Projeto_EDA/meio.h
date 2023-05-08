@@ -52,3 +52,8 @@ int save_meios_txt(NODE* start);
 */
 int load_meios(NODE** start);
 void guardar_meios(NODE* meios);
+
+/*
+ * Calcula a distância entre 2 pontos.
+*/
+double calcular_distancia(char geocode1[], char geocode2[]);

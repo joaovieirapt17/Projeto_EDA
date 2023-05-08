@@ -4,6 +4,7 @@
 #include <string.h>
 #include "meio.h"
 
+
 int add_meio(NODE** start, MEIO* meio) {
 	MEIO* result = find_meio_by_codigo(*start, meio->codigo);
 	if (result != NULL) return -1;
