@@ -504,11 +504,10 @@ int criar_meio(NODE** meios) {
 
         printf("  | Codigo: ");
         scanf("%d", &meio->codigo);
-        getchar();
         fflush(stdin);
 
         printf("  | Tipo: ");
-        scanf("%[^\n]", meio->tipo);
+        scanf("%s", meio->tipo);
         fflush(stdin);
 
         printf("  | Bateria: ");
@@ -555,7 +554,6 @@ int criar_meio(NODE** meios) {
     free(meio);
     return -1;
 }
-
 
 void listar_gestores_registados(NODE* utilizadores) {
     NODE* aux = NULL;
@@ -688,29 +686,6 @@ void listar_meios_proximos(NODE* meios) {
     scanf("%s", geocode);
     fflush(stdin);
 
-    int encontrou = 0;
-    aux = meios;
-    while (aux != NULL) {
-        meio = (MEIO*)aux->data;
-
-        if (strstr(meio->geocode, geocode) != NULL) {
-            printf("Codigo: %d\n", meio->codigo);
-            printf("Tipo: %s\n", meio->tipo);
-            printf("Autonomia: %.2f\n", meio->autonomia);
-            printf("Custo: %.2f\n", meio->custo);
-            printf("Localizacao: %s\n", meio->geocode);
-            printf("------------------------\n");
-            encontrou = 1;
-        }
-
-        aux = aux->next;
-    }
-
-    if (!encontrou) {
-        printf("Nenhum meio encontrado com o geocode fornecido.\n");
-        return;
-    }
-
     int tamanho = 0;
     aux = meios;
     while (aux != NULL) {
@@ -752,20 +727,28 @@ void listar_meios_proximos(NODE* meios) {
         }
     }
 
+    int encontrou = 0;
     printf("Meios disponiveis por proximidade:\n");
     for (int i = 0; i < tamanho; i++) {
-        printf("Codigo: %d\n", lista[i].codigo);
-        printf("Tipo: %s\n", lista[i].tipo);
-        printf("Autonomia: %.2f\n", lista[i].autonomia);
-        printf("Custo: %.2f\n", lista[i].custo);
-        printf("Localizacao: %s\n", lista[i].geocode);
-        printf("Distancia: %.2f\n", (float)calcular_distancia(geocode, lista[i].geocode));
-        printf("------------------------\n");
+        if (strstr(lista[i].geocode, geocode) != NULL) {
+            printf("Codigo: %d\n", lista[i].codigo);
+            printf("Tipo: %s\n", lista[i].tipo);
+            printf("Autonomia: %.2f\n", lista[i].autonomia);
+            printf("Custo: %.2f\n", lista[i].custo);
+            printf("Localizacao: %s\n", lista[i].geocode);
+            printf("Distancia: %.2f\n", (float)calcular_distancia(geocode, lista[i].geocode));
+            printf("------------------------\n");
+            encontrou = 1;
+        }
+    }
+
+    if (!encontrou) {
+        printf("Nenhum meio encontrado com o geocode fornecido.\n");
+        return;
     }
 
     free(lista);
 }
-
 
 void alterar_dados_gestor(NODE** utilizadores) {
     int opc = 1, selected;
