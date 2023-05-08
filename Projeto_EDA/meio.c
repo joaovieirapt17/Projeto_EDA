@@ -97,9 +97,13 @@ int save_meios_txt(NODE* start) {
 		fprintf(fp, "Custo: %.2f\n", meio->custo);
 		fprintf(fp, "Geocode: ///%s\n", meio->geocode);
 		fprintf(fp, "Status: %d\n", meio->status);
+		fprintf(fp, "Latitude: %f\n", meio->latitude);
+		fprintf(fp, "Longitude: %f\n", meio->longitude);
 
 		aux = aux->next;
 	}
+
+	fclose(fp);
 
 	return 0;
 }
@@ -138,12 +142,7 @@ double graus_para_radianos(double graus) {
 }
 
 
-double calcular_distancia(char* geocode1, char* geocode2) {
-	// Extrai as coordenadas de latitude e longitude a partir dos geocodes
-	double lat1, lon1, lat2, lon2;
-	sscanf(geocode1, "%lf,%lf", &lat1, &lon1);
-	sscanf(geocode2, "%lf,%lf", &lat2, &lon2);
-
+double calcular_distancia(double lat1, double lon1, double lat2, double lon2) {
 	// Converte as coordenadas para radianos
 	lat1 = graus_para_radianos(lat1);
 	lon1 = graus_para_radianos(lon1);
@@ -158,3 +157,4 @@ double calcular_distancia(char* geocode1, char* geocode2) {
 	double r = 6371; // raio médio da Terra em quilômetros
 	return c * r;
 }
+
