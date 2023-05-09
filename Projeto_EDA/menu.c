@@ -93,7 +93,7 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
         printf("[ 1 ] Alugar Meio de Mobilidade Eletrica\n");
         printf("[ 2 ] Listar Meios Disponiveis (Ordem decrescente de autonomia)\n");
         printf("[ 3 ] Listar Meios Disponiveis por Geocode\n");
-        printf("[ 4 ] Listar Meios Disponiveis Proximos via Geocode \n");
+        printf("[ 4 ] Listar Meios Proximos Disponiveis por Geocode\n");
         printf("[ 5 ] Alterar Dados Cliente\n");
         printf("[ 6 ] Carregar Saldo\n");
         printf("[ 7 ] Guardar clientes\n");
@@ -700,9 +700,15 @@ void listar_meios_proximos(NODE* meios) {
     scanf("%s", geocode);
     fflush(stdin);
 
-    printf("Introduza as Coordenadas (Latitude e Longitude): ");
-    scanf("%lf %lf", &latitude, &longitude);
+    printf("Introduza as Coordenadas:\n");
+    printf("  | Latitude: ");
+    scanf("%lf", &latitude);
     fflush(stdin);
+
+    printf("  | Longitude: ");
+    scanf("%lf", &longitude);
+    fflush(stdin);
+    printf("------------------------------");
 
     int tamanho = 0;
     aux = meios;
@@ -755,7 +761,7 @@ void listar_meios_proximos(NODE* meios) {
             printf("Custo: %.2f\n", lista[i].custo);
             printf("Localizacao: %s\n", lista[i].geocode);
             printf("Distancia: %.2f\n", calcular_distancia(latitude, longitude, lista[i].latitude, lista[i].longitude));
-            printf("------------------------\n");
+            printf("------------------------------\n");
             encontrou = 1;
         }
     }

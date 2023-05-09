@@ -18,3 +18,13 @@ Geocode: ///PORTO
 Status: 0
 Latitude: 41.158293
 Longitude: -8.630797
+----- MEIO -----
+Codigo: 3
+Tipo: Patins
+Bateria: 100.00
+Autonomia: 100.00
+Custo: 100.00
+Geocode: ///IPCA
+Status: 0
+Latitude: 90.000000
+Longitude: 180.000000
