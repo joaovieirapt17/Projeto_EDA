@@ -58,4 +58,4 @@ void guardar_meios(NODE* meios);
 /*
  * Calcula a distância entre 2 pontos utilizando a formula de Haversine.
 */
-double calcular_distancia(char geocode1[], char geocode2[]);
+double calcular_distancia(double lat1, double lon1, double lat2, double lon2); 

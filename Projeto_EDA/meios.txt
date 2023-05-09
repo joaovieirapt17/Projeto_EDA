@@ -1,0 +1,20 @@
+----- MEIO -----
+Codigo: 1
+Tipo: Bicicleta
+Bateria: 100.00
+Autonomia: 100.00
+Custo: 50.00
+Geocode: ///IPCA
+Status: 0
+Latitude: 41.536985
+Longitude: -8.628221
+----- MEIO -----
+Codigo: 2
+Tipo: Trotinete
+Bateria: 100.00
+Autonomia: 100.00
+Custo: 100.00
+Geocode: ///PORTO
+Status: 0
+Latitude: 41.158293
+Longitude: -8.630797

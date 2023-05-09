@@ -527,11 +527,11 @@ int criar_meio(NODE** meios) {
         fflush(stdin);
 
         printf("  | Latitude: ");
-        scanf("%f", &meio->latitude);
+        scanf("%lf", &meio->latitude);
         fflush(stdin);
 
         printf("  | Longitude: ");
-        scanf("%f", &meio->longitude);
+        scanf("%lf", &meio->longitude);
         fflush(stdin);
 
         meio->status = 0;
@@ -649,6 +649,8 @@ void listar_meios_disponiveis_desc_autonomia(NODE* meios) {
             printf("Autonomia: %.2f\n", temp.autonomia);
             printf("Custo: %.2f\n", temp.custo);
             printf("Localizacao: %s\n", temp.geocode);
+            printf("Latitude: %lf\n", temp.latitude);
+            printf("Longitude: %f\n", temp.longitude);
             printf("------------------------\n");
         }
     }
@@ -675,6 +677,8 @@ void listar_meios_geocode(NODE* meios) {
             printf("Autonomia: %.2f\n", meio->autonomia);
             printf("Custo: %.2f\n", meio->custo);
             printf("Localizacao: %s\n", meio->geocode);
+            printf("Latitude: %f\n", meio->latitude);
+            printf("Longitude: %f\n", meio->longitude);
             printf("------------------------\n");
             encontrou = 1;
         }
@@ -690,9 +694,14 @@ void listar_meios_proximos(NODE* meios) {
     NODE* aux = NULL;
     MEIO* meio = NULL;
     char geocode[100];
+    double latitude, longitude;
 
     printf("Introduza a sua Localizacao:");
     scanf("%s", geocode);
+    fflush(stdin);
+
+    printf("Introduza as Coordenadas (Latitude e Longitude): ");
+    scanf("%lf %lf", &latitude, &longitude);
     fflush(stdin);
 
     int tamanho = 0;
@@ -726,8 +735,8 @@ void listar_meios_proximos(NODE* meios) {
     // Bubble sort para ordenar a lista por distância
     for (int i = 0; i < tamanho - 1; i++) {
         for (int j = 0; j < tamanho - i - 1; j++) {
-            double distancia1 = calcular_distancia(geocode, lista[j].geocode);
-            double distancia2 = calcular_distancia(geocode, lista[j + 1].geocode);
+            double distancia1 = calcular_distancia(latitude, longitude, lista[j].latitude, lista[j].longitude);
+            double distancia2 = calcular_distancia(latitude, longitude, lista[j + 1].latitude, lista[j + 1].longitude);
             if (distancia1 > distancia2) {
                 MEIO temp = lista[j];
                 lista[j] = lista[j + 1];
@@ -745,7 +754,7 @@ void listar_meios_proximos(NODE* meios) {
             printf("Autonomia: %.2f\n", lista[i].autonomia);
             printf("Custo: %.2f\n", lista[i].custo);
             printf("Localizacao: %s\n", lista[i].geocode);
-            printf("Distancia: %.2f\n", (float)calcular_distancia(geocode, lista[i].geocode));
+            printf("Distancia: %.2f\n", calcular_distancia(latitude, longitude, lista[i].latitude, lista[i].longitude));
             printf("------------------------\n");
             encontrou = 1;
         }
@@ -753,11 +762,11 @@ void listar_meios_proximos(NODE* meios) {
 
     if (!encontrou) {
         printf("Nenhum meio encontrado com o geocode fornecido.\n");
-        return;
     }
 
     free(lista);
 }
+
 
 void alterar_dados_gestor(NODE** utilizadores) {
     int opc = 1, selected;
