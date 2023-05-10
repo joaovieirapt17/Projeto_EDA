@@ -56,7 +56,6 @@ int login_menu(NODE* utilizadores, USER** auth) {
         printf("| Password: ");
         scanf("%s", password);
         fflush(stdin);
-
         clear_menu();
 
         *auth = login(utilizadores, username, password);
@@ -162,6 +161,7 @@ int menu_gestor(USER auth, NODE** utilizadores, NODE** meios) {
         printf("[ 1 ] Gerir Gestores\n");
         printf("[ 2 ] Gerir Clientes\n");
         printf("[ 3 ] Gerir Meios de Mobilidade Eletrica\n");
+        printf("[ 4 ] Gerir Grafo\n");
         printf("[ 9 ] Terminar a Sessao\n");
         printf("[ 0 ] Sair\n\n");
         printf("Opcao: ");
@@ -182,6 +182,11 @@ int menu_gestor(USER auth, NODE** utilizadores, NODE** meios) {
         case 3:
             menu_gerir_meios(auth, utilizadores, meios);
             break;
+        /*
+        case 4:
+            menu_gerir_grafo(auth, utilizadores, grafo);
+            break;
+         */
         case 9:
             return -4;
         default:
@@ -366,6 +371,10 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
         }
     } while (escolha != 0);
 }
+
+void menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** meios)
+
+
 
 int criar_gestor(NODE** utilizadores) {
     int opc, res;
@@ -1021,6 +1030,8 @@ void alterar_dados_meios(NODE** meios) {
                 printf("[3] Autonomia\n");
                 printf("[4] Custo\n");
                 printf("[5] Geocode\n");
+                printf("[6] Latitude\n");
+                printf("[7] Longitude\n");
                 printf("[0] Sair\n");
                 printf("Opção:");
                 scanf("%i", &selected);
@@ -1029,8 +1040,10 @@ void alterar_dados_meios(NODE** meios) {
                 clear_menu();
 
                 switch (selected) {
+
                 case 0:
                     return;
+
                 case 1:
                     printf("| Novo tipo: ");
                     scanf(" %[^\n]", meio->tipo);
@@ -1038,6 +1051,7 @@ void alterar_dados_meios(NODE** meios) {
                     save_meios(*meios);
                     printf("\nTipo alterado com sucesso!\n");
                     break;
+
                 case 2:
                     printf("| Nova bateria: ");
                     scanf("%f", &meio->bateria);
@@ -1045,6 +1059,7 @@ void alterar_dados_meios(NODE** meios) {
                     save_meios(*meios);
                     printf("\nBateria alterada com sucesso!\n");
                     break;
+
                 case 3:
                     printf("| Nova autonomia: ");
                     scanf("%f", &meio->autonomia);
@@ -1052,6 +1067,7 @@ void alterar_dados_meios(NODE** meios) {
                     save_meios(*meios);
                     printf("\nAutonomia alterada com sucesso!\n");
                     break;
+
                 case 4:
                     printf("| Novo custo: ");
                     scanf("%f", &meio->custo);
@@ -1059,6 +1075,7 @@ void alterar_dados_meios(NODE** meios) {
                     save_meios(*meios);
                     printf("\nCusto alterado com sucesso!\n");
                     break;
+
                 case 5:
                     printf("| Novo geocode: ");
                     scanf("%f", &meio->geocode);
@@ -1066,6 +1083,23 @@ void alterar_dados_meios(NODE** meios) {
                     save_meios(*meios);
                     printf("\nGeocode alterado com sucesso!\n");
                     break;
+
+                case 6:
+                    printf("| Nova Latitude: ");
+                    scanf("%f", &meio->latitude);
+                    fflush(stdin);
+                    save_meios(*meios);
+                    printf("\nLatitude alterada com sucesso!\n");
+                    break;
+
+                case 7:
+                    printf("| Nova Longitude: ");
+                    scanf("%f", &meio->longitude);
+                    fflush(stdin);
+                    save_meios(*meios);
+                    printf("\nLongitude alterada com sucesso!\n");
+                    break;
+
                 default:
                     printf("\nOpção inválida! Tente novamente.");
                     break;
