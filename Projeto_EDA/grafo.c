@@ -33,3 +33,31 @@ VERTICE* find_vertice_by_geocode(NODE* start, int geocode) {
 	return NULL;
 }
 
+//--------------------------------------------------------------------
+
+int add_aresta(NODE** start, ARESTA* aresta) {
+	ARESTA* result = find_aresta_by_geocode(*start, aresta->geocode);
+	if (result != NULL) return -1;
+	return push(start, aresta, sizeof(ARESTA));
+}
+
+
+ARESTA* find_aresta_by_geocode(NODE* start, int geocode) {
+	NODE* aux = NULL;
+	ARESTA* aresta = NULL;
+
+	if (isEmpty(&start)) return NULL;
+
+	aux = start;
+	while (aux != NULL) {
+		aresta = (ARESTA*)aux->data;
+
+		if (aresta->geocode == geocode) {
+			return aresta;
+		}
+
+		aux = aux->next;
+	}
+
+	return NULL;
+}

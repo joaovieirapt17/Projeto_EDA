@@ -21,3 +21,5 @@ typedef struct vertice {
 int add_vertice(NODE** start, VERTICE* vertice); 
 VERTICE* find_vertice_by_geocode(NODE* start, int geocode); 
 
+int add_aresta(NODE** start, ARESTA* aresta); 
+ARESTA* find_aresta_by_geocode(NODE* start, int geocode); 
