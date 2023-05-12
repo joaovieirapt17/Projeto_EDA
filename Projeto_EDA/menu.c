@@ -318,7 +318,7 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
         printf("+-----------------------------------------------------+\n\n");
 
         printf("[1] Registar Meio de Mobilidade\n");
-        printf("[2] Alterar dados de meio\n");
+        printf("[2] Alterar Dados do Meio de Mobilidade\n");
         printf("[3] Listar Meios Disponiveis (Ordem decrescente de Autonomia)\n");
         printf("[4] Listar Meios Disponiveis numa Localizacao com Geocode\n");
         printf("[5] Remover Meio\n");
@@ -372,7 +372,51 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
     } while (escolha != 0);
 }
 
-void menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** meios)
+void menu_gerir_grafo(Grafo *g) {
+    int escolha;
+
+    do {
+        clear_menu();
+        printf("+------------------------------+\n");
+        printf("|        MENU GERIR GRAFO      |\n");
+        printf("+------------------------------+\n\n");
+
+        printf("[1] Registar Vertice\n");
+        printf("[5] Remover Grafo\n");
+        printf("[6] Guardar Grafo\n");
+        printf("[0] Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &escolha);
+        fflush(stdin);
+
+        clear_menu();
+
+        switch (escolha) {
+        case 1:
+            criar_vertice(g);
+            any_key();
+            break;
+        
+        case 5:
+            remover_grafo();
+            any_key();
+            break;
+
+        case 6:
+            guardar_grafo(g);
+            printf("Grafo guardado com sucesso!\n");
+            any_key();
+            break;
+
+        case 0:
+            printf("A sair do menu...\n");
+            break;
+        default:
+            printf("Opcao invalida! Tente novamente...\n");
+            break;
+        }
+    } while (escolha != 0);
+}
 
 
 
@@ -571,7 +615,6 @@ int criar_meio(NODE** meios) {
     free(meio);
     return -1;
 }
-
 
 void listar_gestores_registados(NODE* utilizadores) {
     NODE* aux = NULL;
@@ -781,7 +824,47 @@ void listar_meios_proximos(NODE* meios) {
 
     free(lista);
 }
+void listar_meios_vertice_geocode(NODE* vertices) {
+    NODE* aux = NULL;
+    NODE* aux_meio = NULL;
 
+    VERTICE* vertice = NULL;
+    MEIO* meio = NULL;
+
+    char geocode[100];
+
+    printf("Introduza a sua Localizacao:");
+    scanf("%s", geocode);
+    fflush(stdin);
+
+    int encontrou = 0;
+    aux = vertices;
+    while (aux != NULL) {
+        vertice = (VERTICE*)aux->data;
+
+        if (strstr(vertice->geocode, geocode) != NULL) {
+
+            aux_meio = vertice->meios;
+            while (aux_meio != NULL) {
+                meio = (MEIO*)aux->data;
+
+                printf("Codigo: %d\n", meio->codigo);
+                printf("Tipo: %s\n", meio->tipo);
+                printf("Autonomia: %.2f\n", meio->autonomia);
+                printf("Custo: %.2f\n", meio->custo);
+                printf("Localizacao: %s\n", meio->geocode);
+                printf("Latitude: %f\n", meio->latitude);
+                printf("Longitude: %f\n", meio->longitude);
+                printf("------------------------\n");
+
+                aux_meio = meio->next;
+            }
+            encontrou = 1;
+        }
+
+        aux = aux->next;
+    }
+}
 
 void alterar_dados_gestor(NODE** utilizadores) {
     int opc = 1, selected;
@@ -1086,7 +1169,7 @@ void alterar_dados_meios(NODE** meios) {
 
                 case 6:
                     printf("| Nova Latitude: ");
-                    scanf("%f", &meio->latitude);
+                    scanf("%lf", &meio->latitude);
                     fflush(stdin);
                     save_meios(*meios);
                     printf("\nLatitude alterada com sucesso!\n");
@@ -1094,7 +1177,7 @@ void alterar_dados_meios(NODE** meios) {
 
                 case 7:
                     printf("| Nova Longitude: ");
-                    scanf("%f", &meio->longitude);
+                    scanf("%lf", &meio->longitude);
                     fflush(stdin);
                     save_meios(*meios);
                     printf("\nLongitude alterada com sucesso!\n");

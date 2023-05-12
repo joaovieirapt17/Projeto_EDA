@@ -1,9 +1,10 @@
 #define _CRT_SECURE_NO_WARNINGS
-
 #pragma once
+
 #include "user.h"
 #include <conio.h>
 #include "meio.h"
+#include "grafo.h"
 
 void clear_menu();
 
@@ -26,6 +27,7 @@ int criar_meio(NODE** meios);
 void listar_gestores_registados(NODE* users);
 void listar_clientes_registados(NODE* users);
 void listar_meios_disponiveis_desc_autonomia(NODE* meios);
+void listar_meios_vertice_geocode(NODE* vertices); 
 
 void alterar_dados_gestor(NODE** users);
 void alterar_dados_cliente(NODE** users);
