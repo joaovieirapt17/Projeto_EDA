@@ -180,7 +180,7 @@ int menu_gestor(USER auth, NODE** utilizadores, NODE** meios) {
             break;
 
         case 3:
-            menu_gerir_meios(auth, utilizadores, meios);
+            //menu_gerir_meios(auth, utilizadores, meios);
             break;
         /*
         case 4:
@@ -308,7 +308,7 @@ void menu_gerir_clientes(USER auth, NODE** utilizadores) {
     } while (escolha != 0);
 }
 
-void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
+void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios, NODE** vertices) {
     int escolha;
 
     do {
@@ -332,7 +332,7 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
 
         switch (escolha) {
         case 1:
-            criar_meio(meios);
+            criar_meio_e_vertice(meios, vertices);
             any_key();
             break;
 
@@ -372,6 +372,7 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
     } while (escolha != 0);
 }
 
+/*
 void menu_gerir_grafo(Grafo *g) {
     int escolha;
 
@@ -417,7 +418,7 @@ void menu_gerir_grafo(Grafo *g) {
         }
     } while (escolha != 0);
 }
-
+*/
 
 
 int criar_gestor(NODE** utilizadores) {
@@ -544,12 +545,15 @@ int criar_cliente(NODE** utilizadores) {
     free(user);
     return -1;
 }
-int criar_meio(NODE** meios) {
+
+int criar_meio_e_vertice(NODE** meios, NODE** vertices) {
     int opc, res;
 
     MEIO* meio = malloc(sizeof(MEIO));
+    VERTICE* vertice = malloc(sizeof(VERTICE));
 
     if (meio == NULL) return -3;
+    if (vertice == NULL) return -3; 
 
     do {
         clear_menu();
@@ -590,6 +594,7 @@ int criar_meio(NODE** meios) {
         meio->status = 0;
 
         res = add_meio(meios, meio);
+        res = add_vertice(vertices, vertice); 
 
         switch (res) {
         case 0:
@@ -611,8 +616,9 @@ int criar_meio(NODE** meios) {
         default: break;
         }
     } while (opc != 0);
-
+    
     free(meio);
+    free(vertice); 
     return -1;
 }
 
@@ -846,7 +852,7 @@ void listar_meios_vertice_geocode(NODE* vertices) {
 
             aux_meio = vertice->meios;
             while (aux_meio != NULL) {
-                meio = (MEIO*)aux->data;
+                meio = (MEIO*)aux_meio->data;
 
                 printf("Codigo: %d\n", meio->codigo);
                 printf("Tipo: %s\n", meio->tipo);
@@ -857,14 +863,18 @@ void listar_meios_vertice_geocode(NODE* vertices) {
                 printf("Longitude: %f\n", meio->longitude);
                 printf("------------------------\n");
 
-                aux_meio = meio->next;
+                aux_meio = aux_meio->next;
             }
             encontrou = 1;
         }
 
         aux = aux->next;
     }
+    if (!encontrou) {
+        printf("Nao foram encontrados meios de transporte nessa localizacao.\n");
+    }
 }
+
 
 void alterar_dados_gestor(NODE** utilizadores) {
     int opc = 1, selected;
@@ -1253,8 +1263,8 @@ void remover_cliente(NODE** utilizadores) {
 void remover_meio(NODE** meios) {
     int opc = 0;
     int codigo;
-    MEIO* meio = malloc(sizeof(MEIO));
-
+    MEIO* meio = malloc(sizeof(MEIO)); 
+    
     //Verificar se o meio existe
     if (meio == NULL) {
         printf("Meio não existe!\n");
