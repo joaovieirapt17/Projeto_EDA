@@ -545,7 +545,6 @@ int criar_cliente(NODE** utilizadores) {
     free(user);
     return -1;
 }
-
 int criar_meio_e_vertice(NODE** meios, NODE** vertices) {
     int opc, res;
 
@@ -621,6 +620,47 @@ int criar_meio_e_vertice(NODE** meios, NODE** vertices) {
     free(vertice); 
     return -1;
 }
+int criar_aresta_meio_vertice(NODE** meios, NODE** vertices) {
+    int codigo_meio, res;
+
+    printf("| NOVA ARESTA:\n\n");
+
+    printf("  | Codigo do Meio: ");
+    scanf("%d", &codigo_meio);
+    fflush(stdin);
+
+    // Procura o meio de transporte com o código fornecido na lista de meios de mobilidade
+    MEIO* meio = find_meio_by_codigo(*meios, codigo_meio);
+    if (meio == NULL) {
+        printf("\nMeio não encontrado.\n");
+        return -2;
+    }
+
+    // Procura o vértice com o mesmo geocódigo do meio de transporte encontrado
+    VERTICE* vertice = find_vertice_by_geocode(*vertices, meio->geocode);
+    if (vertice == NULL) {
+        printf("\nVertice não encontrado.\n");
+        return -2;
+    }
+
+    // Cria a aresta ligando o meio ao vértice
+    res = criar_aresta(meio, vertice);
+
+    switch (res) {
+    case 0:
+        save_meios(*meios);
+        printf("\nAresta adicionada com sucesso.\n");
+        return 0;
+
+    case -1:
+        printf("\nAresta já existe.\n");
+        return -1;
+
+    default:
+        return -3;
+    }
+}
+
 
 void listar_gestores_registados(NODE* utilizadores) {
     NODE* aux = NULL;
