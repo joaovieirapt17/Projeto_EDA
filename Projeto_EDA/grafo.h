@@ -51,6 +51,8 @@ int add_aresta(NODE** start, ARESTA* aresta);
 */
 ARESTA* find_aresta_by_geocode(NODE* start, char geocode[TAM]);
 
+float calcular_distancia_entre_vertices(VERTICE* verticeOrigem, VERTICE* verticeDestino);
+
 /*
  * Cria uma nova Aresta
  *  - return  1: Successo
