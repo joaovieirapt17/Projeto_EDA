@@ -18,12 +18,13 @@ int menu_gestor(USER auth, NODE** users, NODE** meios);
 void menu_gerir_gestores(USER auth, NODE** users);
 void menu_gerir_clientes(USER auth, NODE** users);
 void menu_gerir_meios(USER auth, NODE** users, NODE** meios, NODE** vertices);
+void menu_gerir_grafo(NODE** vertices, VERTICE* grafo);
 
 
 int criar_gestor(NODE** users);
 int criar_cliente(NODE** users);
 int criar_meio_e_vertice(NODE** meios, NODE** vertices);
-int criar_aresta_meio_vertice(NODE** meios, NODE** vertices);
+int ligar_vertices(NODE* grafo);
 
 void listar_gestores_registados(NODE* users);
 void listar_clientes_registados(NODE* users);

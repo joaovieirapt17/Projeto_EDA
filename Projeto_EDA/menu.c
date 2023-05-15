@@ -149,7 +149,7 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
     return 0;
 }
 
-int menu_gestor(USER auth, NODE** utilizadores, NODE** meios) {
+int menu_gestor(USER auth, NODE** utilizadores, NODE** meios, NODE** grafo) {
     int escolha;
 
     do {
@@ -180,13 +180,13 @@ int menu_gestor(USER auth, NODE** utilizadores, NODE** meios) {
             break;
 
         case 3:
-            //menu_gerir_meios(auth, utilizadores, meios);
+            menu_gerir_meios(auth, utilizadores, meios);
             break;
-        /*
+        
         case 4:
-            menu_gerir_grafo(auth, utilizadores, grafo);
+            menu_gerir_grafo(auth, utilizadores, meios, grafo);
             break;
-         */
+         
         case 9:
             return -4;
         default:
@@ -372,8 +372,7 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios, NODE** verti
     } while (escolha != 0);
 }
 
-/*
-void menu_gerir_grafo(Grafo *g) {
+int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** meios, NODE** grafo) {
     int escolha;
 
     do {
@@ -382,9 +381,9 @@ void menu_gerir_grafo(Grafo *g) {
         printf("|        MENU GERIR GRAFO      |\n");
         printf("+------------------------------+\n\n");
 
-        printf("[1] Registar Vertice\n");
-        printf("[5] Remover Grafo\n");
-        printf("[6] Guardar Grafo\n");
+        printf("[1] Conectar Vertices\n");
+        printf("[2] Listar Vertices\n");
+        printf("[3] Guardar Grafo\n");
         printf("[0] Sair\n");
         printf("Opcao: ");
         scanf("%d", &escolha);
@@ -394,21 +393,22 @@ void menu_gerir_grafo(Grafo *g) {
 
         switch (escolha) {
         case 1:
-            criar_vertice(g);
+            ligar_vertices(grafo);
             any_key();
             break;
-        
-        case 5:
-            remover_grafo();
+        /*
+        case 2:
+            listar_meios_vertice_geocode(*grafo); 
             any_key();
             break;
-
-        case 6:
-            guardar_grafo(g);
+        */
+        /*
+        case 3:
+            guardar_grafo();
             printf("Grafo guardado com sucesso!\n");
             any_key();
             break;
-
+         */
         case 0:
             printf("A sair do menu...\n");
             break;
@@ -418,8 +418,6 @@ void menu_gerir_grafo(Grafo *g) {
         }
     } while (escolha != 0);
 }
-*/
-
 
 int criar_gestor(NODE** utilizadores) {
     int opc, res;
@@ -620,46 +618,34 @@ int criar_meio_e_vertice(NODE** meios, NODE** vertices) {
     free(vertice); 
     return -1;
 }
-int criar_aresta_meio_vertice(NODE** meios, NODE** vertices) {
-    int codigo_meio, res;
+int ligar_vertices(NODE** grafo) {
+    char origem[TAM];
+    char destino[TAM];
+    float peso = 0.0;
 
-    printf("| NOVA ARESTA:\n\n");
+    printf("Vertice de Origem: ");
+    scanf("%s", origem);
+    printf("Vertice de Destino: ");
+    scanf("%s", destino);
 
-    printf("  | Codigo do Meio: ");
-    scanf("%d", &codigo_meio);
-    fflush(stdin);
-
-    // Procura o meio de transporte com o código fornecido na lista de meios de mobilidade
-    MEIO* meio = find_meio_by_codigo(*meios, codigo_meio);
-    if (meio == NULL) {
-        printf("\nMeio não encontrado.\n");
-        return -2;
-    }
-
-    // Procura o vértice com o mesmo geocódigo do meio de transporte encontrado
-    VERTICE* vertice = find_vertice_by_geocode(*vertices, meio->geocode);
-    if (vertice == NULL) {
-        printf("\nVertice não encontrado.\n");
-        return -2;
-    }
-
-    // Cria a aresta ligando o meio ao vértice
-    res = criar_aresta(meio, vertice);
+    int res = criar_aresta(grafo, origem, destino, peso);
 
     switch (res) {
-    case 0:
-        save_meios(*meios);
-        printf("\nAresta adicionada com sucesso.\n");
+    case 1:
+        printf("\nVertices Conectados com Sucesso.\n");
         return 0;
-
     case -1:
-        printf("\nAresta já existe.\n");
+        printf("\nVertice de Origem ou Destino não Encontrado.\n");
         return -1;
-
+    case -2:
+        printf("\nAresta já Existe.\n");
+        return -1;
     default:
-        return -3;
+        return -1;
     }
 }
+
+
 
 
 void listar_gestores_registados(NODE* utilizadores) {
@@ -870,6 +856,7 @@ void listar_meios_proximos(NODE* meios) {
 
     free(lista);
 }
+
 void listar_meios_vertice_geocode(NODE* vertices) {
     NODE* aux = NULL;
     NODE* aux_meio = NULL;
@@ -911,7 +898,7 @@ void listar_meios_vertice_geocode(NODE* vertices) {
         aux = aux->next;
     }
     if (!encontrou) {
-        printf("Nao foram encontrados meios de transporte nessa localizacao.\n");
+        printf("Nao foram encontrados meios de mobilidade nessa localizacao.\n");
     }
 }
 
