@@ -16,48 +16,68 @@ typedef struct {
     double longitude;   // Longitude do meio
 } MEIO;
 
-/*
- * Adiciona novo meio de mobilidade elétrica
- *  - return  0: Success
- *  - return -1: Meio already exists
- *  - return -3: Out of memory
-*/
+/**
+ * @brief Adiciona um novo meio de mobilidade elétrica a lista
+ * @param start O ponteiro para o início da lista.
+ * @param meio O ponteiro para o meio a ser adicionado.
+ * @return  0 em caso de sucesso
+ * @return -1 se o meio já existir
+ * @return -3 se não houver memoria disponivel
+ */
 int add_meio(NODE** start, MEIO* meio);
 
-/*
- * Encontra um meio dado um código:
- *  - Retorna o codigo
- *  - Retorna NULL if not found
-*/
+/**
+ * @brief Encontra um meio dado um código.
+ * @param start O ponteiro para o início da lista.
+ * @param codigo O código do meio a ser encontrado.
+ * @return O ponteiro para o meio encontrado.
+ * @return NULL se o meio não for encontrado.
+ */
 MEIO* find_meio_by_codigo(NODE* start, int codigo);
 
-/*
- * Remove um meio dado um respetivo código
- *  - return  0: Success
- *  - return -1: meio not found
- *  - return -2: List is empty
-*/
+/**
+ * @brief Remove um meio dado um código.
+ * @param start O ponteiro para o início da lista.
+ * @param codigo O código do meio a ser removido.
+ * @return 0 em caso de sucesso.
+ * @return -1 se o meio não for encontrado.
+ * @return -2 se a lista estiver vazia.
+ */
 int remove_meio_by_codigo(NODE** start, int codigo);
 
-
-/*
- * Guarda o meio em ficheiro binário.
-*/
+/**
+ * @brief Guarda os meios em um arquivo binário.
+ * @param start O ponteiro para o início da lista.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao escrever no arquivo.
+ */
 int save_meios(NODE* start);
 
-/*
- * Guarda o meio em ficheiro texto.
-*/
+/**
+ * @brief Guarda os meios em um arquivo de texto.
+ * @param start O ponteiro para o início da lista.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao escrever no arquivo.
+ */
 int save_meios_txt(NODE* start);
 
-/*
- * Carrega os meios do ficheiro binário.
-*/
+/**
+ * @brief Carrega os meios a partir de um arquivo binário.
+ * @param start O ponteiro para o início da lista.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao ler o arquivo.
+ */
 int load_meios(NODE** start);
+
 void guardar_meios(NODE* meios);
 
-/*
- * Calcula a distância entre 2 pontos utilizando a formula de Haversine.
+/**
+*@brief Calcula a distância entre dois pontos utilizando a fórmula de Haversine.
+* @param lat1 Latitude do ponto 1.
+* @param lon1 Longitude do ponto 1.
+* @param lat2 Latitude do ponto 2.
+* @param lon2 Longitude do ponto 2.
+* @return A distância entre os pontos
 */
 double calcular_distancia(double lat1, double lon1, double lat2, double lon2); 
 
