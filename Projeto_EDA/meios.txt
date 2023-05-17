@@ -1,12 +1,12 @@
 ----- MEIO -----
 Codigo: 1
-Tipo: Bicicleta
+Tipo: Patins Eletricos
 Bateria: 100.00
 Autonomia: 100.00
 Custo: 50.00
 Geocode: ///IPCA
 Status: 0
-Latitude: 41.536985
+Latitude: 42.536985
 Longitude: -8.628221
 ----- MEIO -----
 Codigo: 2
@@ -28,3 +28,13 @@ Geocode: ///IPCA
 Status: 0
 Latitude: 90.000000
 Longitude: 180.000000
+----- MEIO -----
+Codigo: 4
+Tipo: Bicicleta
+Bateria: 100.00
+Autonomia: 50.00
+Custo: 100.00
+Geocode: ///BARCELOS
+Status: 0
+Latitude: 1231234.000000
+Longitude: 1231245.000000

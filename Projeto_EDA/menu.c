@@ -1341,9 +1341,6 @@ void alterar_dados_meios(NODE** vertices) {
     } while (opc != 0);
 }
 
-
-
-
 void remover_cliente(NODE** utilizadores) {
     int opc = 0;
 
@@ -1391,18 +1388,12 @@ void remover_cliente(NODE** utilizadores) {
 void remover_meio(NODE** vertices) {
     int opc = 0;
     int codigo;
-    MEIO* meio = malloc(sizeof(MEIO));
-
-    // Verificar se o meio existe
-    if (meio == NULL) {
-        printf("Meio não existe!\n");
-        return;
-    }
+    MEIO* meio = NULL;
 
     do {
         clear_menu();
 
-        printf("Codigo do meio: ");
+        printf("Código do meio: ");
         scanf("%i", &codigo);
         fflush(stdin);
 
@@ -1418,29 +1409,31 @@ void remover_meio(NODE** vertices) {
         }
 
         if (meio == NULL) {
-            printf("Meio nao existe!\n");
+            printf("Meio não existe!\n");
             printf("Tentar novamente? 0 - Cancelar, ou 1!\n");
             scanf("%i", &opc);
             fflush(stdin);
         }
+        else {
+            switch (remove_meio_by_codigo(&((VERTICE*)aux_vertice->data)->meios, codigo)) {
+            case 0:
+                printf("Meio removido com sucesso!\n");
+                save_meios(*vertices);
+                return;
+                break;
 
-        switch (remove_meio_by_codigo(meios, codigo)) {
-        case 0:
-            printf("Meio removido com sucesso!\n");
-            save_meios(*meios);
-            return;
-            break;
-
-        case -1:
-            printf("Meio nao existe!\n");
-            printf("Tentar novamente? 0 - Cancelar, ou 1!\n");
-            scanf("%i", &opc);
-            fflush(stdin);
-            break;
+            case -1:
+                printf("Meio não existe!\n");
+                printf("Tentar novamente? 0 - Cancelar, ou 1!\n");
+                scanf("%i", &opc);
+                fflush(stdin);
+                break;
+            }
         }
 
     } while (opc != 0);
 }
+
 void alugar_meio(NODE** meios, NODE** utilizadores, USER auth) {
     int codigo, opc = 0;
     float custo, saldo, new_saldo;
@@ -1451,7 +1444,7 @@ void alugar_meio(NODE** meios, NODE** utilizadores, USER auth) {
     printf("Saldo atual: %.2f\n\n", auth.saldo);
 
     // Lista os meios disponíveis
-    listar_meios_disponiveis_desc_autonomia(*meios);
+    listar_meios_disponiveis_descaa_autonomia(*meios);
 
     do {
         printf("Codigo do meio a alugar: ");
