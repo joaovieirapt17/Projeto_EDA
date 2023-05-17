@@ -78,7 +78,12 @@ void alterar_dados_proprio_cliente(NODE** utilizadores, USER auth);
 void listar_meios_proximos(NODE* meios); 
 
 void remover_cliente(NODE** utilizadores);
-void remover_meio(NODE** meios);
+
+/**
+ * @brief Remove um meio de mobilidade do vértice.
+ * @param vertices O ponteiro para a lista de vértices.
+ */
+void remover_meio(NODE** vertices);
 
 void alugar_meio(NODE** meios, NODE** utilizadores, USER user);
 

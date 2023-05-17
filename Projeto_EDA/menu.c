@@ -790,10 +790,11 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
     int pos = 0, size = 0, i, j;
 
     MEIO* lista = NULL;
+    NODE* aux = NULL;
 
     // Conta o número de meios de mobilidade disponíveis
     while (aux_vertice != NULL) {
-        NODE* aux = ((VERTICE*)aux_vertice->data)->meios;
+        aux = ((VERTICE*)aux_vertice->data)->meios;
         while (aux != NULL) {
             meio = (MEIO*)aux->data;
             if (meio->status == 0) {
@@ -802,7 +803,7 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
             aux = aux->next;
         }
         aux_vertice = aux_vertice->next;
-    }
+    }   
 
     if (size == 0) {
         printf("Nenhum meio disponivel!\n");
@@ -815,7 +816,7 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
 
     // Cria a lista de meios de mobilidade disponíveis
     while (aux_vertice != NULL) {
-        NODE* aux = ((VERTICE*)aux_vertice->data)->meios;
+        aux = ((VERTICE*)aux_vertice->data)->meios;
         while (aux != NULL) {
             meio = (MEIO*)aux->data;
             if (meio->status == 0) {
@@ -845,7 +846,7 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
         printf("Tipo: %s\n", temp.tipo);
         printf("Autonomia: %.2f\n", temp.autonomia);
         printf("Custo: %.2f\n", temp.custo);
-        printf("Localizacao: %s\n", temp.localizacao);
+        printf("Localizacao: %s\n", temp.geocode);
         printf("Latitude: %lf\n", temp.latitude);
         printf("Longitude: %lf\n", temp.longitude);
         printf("------------------------\n");
@@ -1373,12 +1374,12 @@ void remover_cliente(NODE** utilizadores) {
         }
     } while (opc != 0);
 }
-void remover_meio(NODE** meios) {
+void remover_meio(NODE** vertices) {
     int opc = 0;
     int codigo;
-    MEIO* meio = malloc(sizeof(MEIO)); 
-    
-    //Verificar se o meio existe
+    MEIO* meio = malloc(sizeof(MEIO));
+
+    // Verificar se o meio existe
     if (meio == NULL) {
         printf("Meio não existe!\n");
         return;
@@ -1391,7 +1392,16 @@ void remover_meio(NODE** meios) {
         scanf("%i", &codigo);
         fflush(stdin);
 
-        meio = find_meio_by_codigo(*meios, codigo);
+        // Procurar o meio pelo código nos vértices
+        NODE* aux_vertice = *vertices;
+        while (aux_vertice != NULL) {
+            NODE** meios = &((VERTICE*)aux_vertice->data)->meios;
+            meio = find_meio_by_codigo(meios, codigo);
+            if (meio != NULL) {
+                break;
+            }
+            aux_vertice = aux_vertice->next;
+        }
 
         if (meio == NULL) {
             printf("Meio nao existe!\n");
@@ -1417,7 +1427,6 @@ void remover_meio(NODE** meios) {
 
     } while (opc != 0);
 }
-
 void alugar_meio(NODE** meios, NODE** utilizadores, USER auth) {
     int codigo, opc = 0;
     float custo, saldo, new_saldo;
