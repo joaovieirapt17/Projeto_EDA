@@ -6,7 +6,6 @@
 void clear_menu() {
     system("cls");
 }
-
 void any_key() {
     printf("\nPressiona qualquer tecla para continuar...");
     _getch();
@@ -549,7 +548,7 @@ int criar_cliente(NODE** utilizadores) {
     return -1;
 }
 int criar_meio_e_vertice(NODE** vertices) {
-    int opc, res;
+    int opc, res, tipo_escolha;
     MEIO* meio = malloc(sizeof(MEIO)); // Aloca memória para um novo meio de mobilidade
     VERTICE* vertice;
 
@@ -564,8 +563,36 @@ int criar_meio_e_vertice(NODE** vertices) {
         fflush(stdin);
 
         printf("  | Tipo: ");
-        scanf("%s", meio->tipo);
+        printf("    [1] Bicicleta\n");
+        printf("    [2] Trotinete\n");
+        printf("    [3] Mota\n");
+        printf("    [4] Carro\n");
+        printf("    Opcao: ");
+        scanf("%d", &tipo_escolha);
         fflush(stdin);
+
+        if (tipo_escolha < 1 || tipo_escolha > 4) {
+            printf("\nOpção inválida! Escolha um número entre 1 e 4!\n");
+        }
+
+        switch (tipo_escolha) {
+        case 1:
+            strcpy(meio->tipo, "Bicicleta");
+            break;
+        case 2:
+            strcpy(meio->tipo, "Trotinete");
+            break;
+        case 3:
+            strcpy(meio->tipo, "Mota");
+            break;
+        case 4:
+            strcpy(meio->tipo, "Carro");
+            break;
+        default:
+            printf("Escolha inválida! Por favor, tente novamente.\n");
+            any_key();
+            continue;
+        }
 
         printf("  | Bateria: ");
         scanf("%f", &meio->bateria);
@@ -646,7 +673,7 @@ int criar_meio_e_vertice(NODE** vertices) {
     return -1;
 }
 int criar_meio(NODE** vertices) {
-    int opc, res;
+    int opc, res, tipo_escolha; 
     MEIO* meio = malloc(sizeof(MEIO)); // Aloca memória para um novo meio de mobilidade
     VERTICE* vertice;
 
@@ -661,8 +688,36 @@ int criar_meio(NODE** vertices) {
         fflush(stdin);
 
         printf("  | Tipo: ");
-        scanf("%s", meio->tipo);
+        printf("    [1] Bicicleta\n");
+        printf("    [2] Trotinete\n");
+        printf("    [3] Mota\n");
+        printf("    [4] Carro\n");
+        printf("    Opcao: ");
+        scanf("%d", &tipo_escolha);
         fflush(stdin);
+
+        if (tipo_escolha < 1 || tipo_escolha > 4) {
+            printf("\nOpção inválida! Escolha um número entre 1 e 4!\n");
+        }
+
+        switch (tipo_escolha) {
+        case 1:
+            strcpy(meio->tipo, "Bicicleta");
+            break;
+        case 2:
+            strcpy(meio->tipo, "Trotinete");
+            break;
+        case 3:
+            strcpy(meio->tipo, "Mota");
+            break;
+        case 4:
+            strcpy(meio->tipo, "Carro");
+            break;
+        default:
+            printf("Escolha inválida! Por favor, tente novamente.\n");
+            any_key();
+            continue;
+        }
 
         printf("  | Bateria: ");
         scanf("%f", &meio->bateria);
@@ -725,7 +780,6 @@ int criar_meio(NODE** vertices) {
     free(meio); // Libera a memória alocada para o meio
     return -1;
 }
-
 int ligar_vertices(NODE** vertices) {
     char origem[TAM];
     char destino[TAM];
@@ -1434,74 +1488,86 @@ void remover_meio(NODE** vertices) {
     } while (opc != 0);
 }
 
-void alugar_meio(NODE** meios, NODE** utilizadores, USER auth) {
+void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
     int codigo, opc = 0;
     float custo, saldo, new_saldo;
     USER* user = NULL;
 
-
     // Mostra o saldo do usuário
     printf("Saldo atual: %.2f\n\n", auth.saldo);
 
-    // Lista os meios disponíveis
-    listar_meios_disponiveis_descaa_autonomia(*meios);
+    // Listar meios próximos disponíveis
+    listar_meios_proximos(*vertices);
 
     do {
         printf("Codigo do meio a alugar: ");
         scanf("%d", &codigo);
         fflush(stdin);
 
-        // Encontra o meio pelo código
-        MEIO* meio = find_meio_by_codigo(*meios, codigo);
+        // Encontrar o meio pelo código nos vértices
+        NODE* aux_vertice = *vertices;
+        while (aux_vertice != NULL) {
+            NODE* aux_meio = ((VERTICE*)aux_vertice->data)->meios;
+            while (aux_meio != NULL) {
+                MEIO* meio = (MEIO*)aux_meio->data;
+                if (meio->codigo == codigo) {
+                    // Verificar se o meio já está alugado
+                    if (meio->status == 1) {
+                        printf("Meio já se encontra alugado!\n");
+                        printf("Tentar novamente? 0 - cancelar, ou 1!\n");
+                        scanf("%i", &opc);
+                        fflush(stdin);
+                        break;
+                    }
 
-        if (meio == NULL) {
-            printf("Meio nao existe!\n");
+                    // Calcular o custo do aluguel
+                    custo = meio->custo;
+
+                    // Verificar se o usuário tem saldo suficiente
+                    saldo = auth.saldo;
+                    if (saldo < custo) {
+                        printf("Saldo insuficiente para alugar este meio de mobilidade!\n");
+                        printf("Tentar novamente? 0 - cancelar, ou 1!\n");
+                        scanf("%i", &opc);
+                        fflush(stdin);
+                        break;
+                    }
+
+                    // Atualizar o saldo do usuário
+                    new_saldo = saldo - custo;
+
+                    user = find_user_by_username(*utilizadores, auth.username);
+                    user->saldo = new_saldo;
+
+                    // Atualizar o status do meio
+                    meio->status = 1;
+
+                    // Mostrar o sucesso do aluguel
+                    printf("Meio de mobilidade alugado com sucesso!\n\n");
+                    printf("Novo saldo: %.2f\n", new_saldo);
+
+                    // Salvar as alterações
+                    guardar_users(*utilizadores);
+                    guardar_meios(*vertices);
+
+                    return;
+                }
+                aux_meio = aux_meio->next;
+            }
+
+            if (aux_meio != NULL) {
+                break;
+            }
+
+            aux_vertice = aux_vertice->next;
+        }
+
+        if (aux_vertice == NULL) {
+            printf("Meio não existe!\n");
             printf("Tentar novamente? 0 - cancelar, ou 1!\n");
             scanf("%i", &opc);
             fflush(stdin);
-            continue;
         }
-
-        // Verifica se o meio já está alugado
-        if (meio->status == 1) {
-            printf("Meio ja se encontra alugado!\n");
-            printf("Tentar novamente? 0 - cancelar, ou 1!\n");
-            scanf("%i", &opc);
-            fflush(stdin);
-            continue;
-        }
-
-        // Calcula o custo do aluguer
-        custo = meio->custo;
-
-        // Verifica se o usuário tem saldo suficiente
-        saldo = auth.saldo;
-        if (saldo < custo) {
-            printf("Saldo insuficiente para alugar este meio de mobilidade!\n");
-            printf("Tentar novamente? 0 - cancelar, ou 1!\n");
-            scanf("%i", &opc);
-            fflush(stdin);
-            continue;
-        }
-
-        // Atualiza o saldo do usuário
-        new_saldo = saldo - custo;
-
-        user = find_user_by_username(*utilizadores, auth.username);
-        user->saldo = user->saldo;
-
-        // Atualiza o status do meio
-        meio->status = 1;
-
-        // Mostra o sucesso do aluguer
-        printf("Meio de mobilidade alugado com sucesso!\n\n");
-        printf("Novo saldo: %.2f\n", saldo);
-
-        // Salva as alterações
-        guardar_users(*utilizadores);
-        guardar_meios(*meios);
-
-        return;
     } while (opc != 0);
 }
 

@@ -6,8 +6,14 @@
 #include "meio.h"
 #include "grafo.h"
 
+/**
+ * @brief Limpa a consola.
+ */
 void clear_menu();
 
+/**
+ * @brief Aguarda o utilizador pressionar qualquer tecla antes de continuar.
+ */
 void any_key();
 
 
@@ -51,14 +57,23 @@ int criar_meio_e_vertice(NODE** vertices);
  */
 int ligar_vertices(NODE** vertices); 
 
+/**
+ * @brief Lista os gestores registados.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void listar_gestores_registados(NODE* users);
+
+/**
+ * @brief Lista os clientes registados.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void listar_clientes_registados(NODE* users);
 
 /**
  * @brief Lista os meios de mobilidade disponíveis em ordem decrescente de autonomia.
  * @param vertices A lista de vértices do grafo.
  */
-void listar_meios_disponiveis_decrescente_autonomia(NODE* meios);
+void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices);
 
 /**
  * @brief Lista os meios de mobilidade em um vértice com base em um geocódigo.
@@ -66,17 +81,41 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* meios);
  */
 void listar_meios_vertice_geocode(NODE* vertices); 
 
+/**
+ * @brief Altera os dados de um gestor.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void alterar_dados_gestor(NODE** users);
+
+/**
+ * @brief Altera os dados de um cliente.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void alterar_dados_cliente(NODE** users);
-void alterar_dados_meios(NODE** meios);
+
+/**
+ * @brief Altera os dados de um meio de mobilidade elétrica.
+ * @param vertices Ponteiro para a lista de vértices.
+ */
+void alterar_dados_meios(NODE** vertices);
+
+/**
+ * @brief Altera os dados do próprio cliente.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ * @param auth Utilizador autenticado.
+ */
 void alterar_dados_proprio_cliente(NODE** utilizadores, USER auth);
 
 /**
  * Lista os meios disponíveis próximos à localização fornecida.
  * @param vertices Ponteiro para a lista de vértices.
  */
-void listar_meios_proximos(NODE* meios); 
+void listar_meios_proximos(NODE* vertices); 
 
+/**
+ * @brief Remove um cliente da lista de utilizadores.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void remover_cliente(NODE** utilizadores);
 
 /**
@@ -85,8 +124,19 @@ void remover_cliente(NODE** utilizadores);
  */
 void remover_meio(NODE** vertices);
 
-void alugar_meio(NODE** meios, NODE** utilizadores, USER user);
+/**
+ * @brief Aluga um meio de mobilidade.
+ * @param vertices Ponteiro para a lista de vértices.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ * @param auth O utilizador autenticado.
+ */
+void alugar_meio(NODE** vertices, NODE** utilizadores, USER user);
 
+/**
+ * @brief Carrega saldo na conta do utilizador.
+ * @param auth Utilizador autenticado.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void carregar_saldo(USER auth, NODE** utilizadores);
 
 
