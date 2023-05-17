@@ -131,6 +131,53 @@ int load_meios(NODE** start) {
 	return 0;
 }
 
+int load_vertices(NODE** vertices) {
+	int res;
+
+	FILE* fp = fopen("vertices.dat", "rb");
+
+	if (fp == NULL) {
+		return -3;
+	}
+
+	do {
+		VERTICE* vertice = (VERTICE*)malloc(sizeof(VERTICE));
+
+		res = fread(vertice, sizeof(VERTICE), 1, fp);
+
+		// Não leu nenhum vértice, sai do loop
+		if (res == 0) {
+			break;
+		}
+
+		// Carrega os meios do vértice
+		do {
+			MEIO* meio = (MEIO*)malloc(sizeof(MEIO));
+
+			res = fread(meio, sizeof(MEIO), 1, fp);
+
+			// Não leu nenhum meio, sai do loop
+			if (res == 0) {
+				free(meio);
+				break;
+			}
+
+			add_meio(&(vertice->meios), meio);
+		} while (1);
+
+		if (vertice == NULL) {
+			return -2;
+		}
+
+		add_vertice(vertices, vertice);
+	} while (1);
+
+	fclose(fp);
+
+	return 0;
+}
+
+
 void guardar_meios(NODE* meios) {
 	save_meios(meios);
 	save_meios_txt(meios);
