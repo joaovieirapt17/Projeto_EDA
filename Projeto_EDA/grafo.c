@@ -69,10 +69,10 @@ float calcular_distancia_entre_vertices(VERTICE* verticeOrigem, VERTICE* vertice
 	return distancia;
 }
 
-int criar_aresta(NODE* grafo, char origem[], char destino[], float peso) {
+int criar_aresta(NODE* vertices, char origem[], char destino[], float peso) {
 	// Encontra os vértices de origem e destino
-	VERTICE* verticeOrigem = find_vertice_by_geocode(grafo, origem);
-	VERTICE* verticeDestino = find_vertice_by_geocode(grafo, destino);
+	VERTICE* verticeOrigem = find_vertice_by_geocode(vertices, origem);
+	VERTICE* verticeDestino = find_vertice_by_geocode(vertices, destino);
 
 	// Se algum dos vértices não existir, retorna -1
 	if (verticeOrigem == NULL || verticeDestino == NULL) {
@@ -86,8 +86,7 @@ int criar_aresta(NODE* grafo, char origem[], char destino[], float peso) {
 	}
 
 	// Calcula a distância entre os vértices
-	float distancia = calcular_distancia_entre_vertices(verticeOrigem, verticeDestino);
-	peso = distancia;
+	peso = calcular_distancia_entre_vertices(verticeOrigem, verticeDestino);
 
 	//Cria a nova aresta
 	novaAresta = malloc(sizeof(ARESTA));

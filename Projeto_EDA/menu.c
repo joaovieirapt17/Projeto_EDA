@@ -854,7 +854,6 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
 
     free(lista);
 }
-
 void listar_meios_proximos(NODE* vertices) {
     NODE* aux = NULL;
     MEIO* meio = NULL;
@@ -1204,25 +1203,39 @@ void alterar_dados_cliente(NODE** utilizadores) {
 
     guardar_users(*utilizadores);
 }
-void alterar_dados_meios(NODE** meios) {
+void alterar_dados_meios(NODE** vertices) {
     int opc = 1, selected;
     int codigo;
     MEIO* meio = NULL;
 
     do {
-        printf("Código do meio de mobilidade eletrica:");
+        printf("Código do meio de mobilidade elétrica: ");
         scanf("%d", &codigo);
         fflush(stdin);
 
-        meio = find_meio_by_codigo(*meios, codigo);
+        NODE* aux_vertice = *vertices;
+        while (aux_vertice != NULL) {
+            NODE* aux_meio = ((VERTICE*)aux_vertice->data)->meios;
+            while (aux_meio != NULL) {
+                meio = (MEIO*)aux_meio->data;
+                if (meio->codigo == codigo) {
+                    break;
+                }
+                aux_meio = aux_meio->next;
+            }
+            if (aux_meio != NULL) {
+                break;
+            }
+            aux_vertice = aux_vertice->next;
+        }
 
         if (meio == NULL) {
             do {
                 clear_menu();
-                printf("Meio de mobilidade eletrica não encontrado!\n\n");
-                printf("[1]Tentar novamente\n");
+                printf("Meio de mobilidade elétrica não encontrado!\n\n");
+                printf("[1] Tentar novamente\n");
                 printf("[0] Sair\n");
-                printf("Opção:");
+                printf("Opção: ");
                 scanf("%i", &opc);
                 fflush(stdin);
                 clear_menu();
@@ -1240,14 +1253,13 @@ void alterar_dados_meios(NODE** meios) {
                 printf("[6] Latitude\n");
                 printf("[7] Longitude\n");
                 printf("[0] Sair\n");
-                printf("Opção:");
+                printf("Opção: ");
                 scanf("%i", &selected);
                 fflush(stdin);
 
                 clear_menu();
 
                 switch (selected) {
-
                 case 0:
                     return;
 
@@ -1255,7 +1267,7 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Novo tipo: ");
                     scanf(" %[^\n]", meio->tipo);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nTipo alterado com sucesso!\n");
                     break;
 
@@ -1263,7 +1275,7 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Nova bateria: ");
                     scanf("%f", &meio->bateria);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nBateria alterada com sucesso!\n");
                     break;
 
@@ -1271,7 +1283,7 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Nova autonomia: ");
                     scanf("%f", &meio->autonomia);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nAutonomia alterada com sucesso!\n");
                     break;
 
@@ -1279,7 +1291,7 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Novo custo: ");
                     scanf("%f", &meio->custo);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nCusto alterado com sucesso!\n");
                     break;
 
@@ -1287,7 +1299,7 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Novo geocode: ");
                     scanf("%f", &meio->geocode);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nGeocode alterado com sucesso!\n");
                     break;
 
@@ -1295,7 +1307,7 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Nova Latitude: ");
                     scanf("%lf", &meio->latitude);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nLatitude alterada com sucesso!\n");
                     break;
 
@@ -1303,21 +1315,21 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Nova Longitude: ");
                     scanf("%lf", &meio->longitude);
                     fflush(stdin);
-                    save_meios(*meios);
+                    save_meios(*vertices);
                     printf("\nLongitude alterada com sucesso!\n");
                     break;
 
                 default:
-                    printf("\nOpção inválida! Tente novamente.");
+                    printf("\nOpção inválida! Tente novamente.\n");
                     break;
                 }
 
                 if (selected != 0) {
                     do {
-                        printf("\nDeseja continuar a alterar dados deste meio de mobilidade eletrica?");
+                        printf("\nDeseja continuar a alterar dados deste meio de mobilidade elétrica?");
                         printf("\n[1] Sim");
                         printf("\n[0] Não");
-                        printf("\nOpção:");
+                        printf("\nOpção: ");
                         scanf("%i", &opc);
                         fflush(stdin);
                         clear_menu();
@@ -1328,6 +1340,8 @@ void alterar_dados_meios(NODE** meios) {
         }
     } while (opc != 0);
 }
+
+
 
 
 void remover_cliente(NODE** utilizadores) {
