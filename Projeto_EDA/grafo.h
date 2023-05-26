@@ -13,8 +13,8 @@ typedef struct aresta {
 
 typedef struct vertice {
 	char geocode[TAM]; // geocodigo what3words
-	// int numeroArestas;
-	// int numeroMeios;
+	int numeroArestas;
+	int numeroMeios;
 	NODE* arestas;
 	NODE* meios; // Lista ligada com os codigos dos meios de transporte existentes neste geocodigo
 	double latitude;

@@ -19,7 +19,6 @@ typedef struct user {
     ROLE role;
 }USER;
 
-
 /**
  * @brief Adiciona um novo utilizador à lista.
  * @param start O ponteiro para o início da lista.

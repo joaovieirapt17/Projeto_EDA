@@ -19,11 +19,11 @@ void any_key();
 
 int initial_menu(NODE* users, USER** auth);
 int login_menu(NODE* users, USER** auth);
-int menu_cliente(USER auth, NODE** users, NODE** meios);
-int menu_gestor(USER auth, NODE** users, NODE** meios, NODE** vertices);
+int menu_cliente(USER auth, NODE** users, NODE** vertices);
+int menu_gestor(USER auth, NODE** users, NODE** vertices);
 void menu_gerir_gestores(USER auth, NODE** users);
 void menu_gerir_clientes(USER auth, NODE** users);
-void menu_gerir_meios(USER auth, NODE** users, NODE** meios, NODE** vertices);
+void menu_gerir_meios(USER auth, NODE** users, NODE** vertices);
 int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices); 
 
 
@@ -111,6 +111,12 @@ void alterar_dados_proprio_cliente(NODE** utilizadores, USER auth);
  * @param vertices Ponteiro para a lista de vértices.
  */
 void listar_meios_proximos(NODE* vertices); 
+
+/**
+*@brief Lista os vértices existentes e permite visualizar os meios de um vértice específico.
+* @param vertices O ponteiro para o início da lista de vértices.
+*/
+void listar_vertices_existentes(NODE* vertices);
 
 /**
  * @brief Remove um cliente da lista de utilizadores.
