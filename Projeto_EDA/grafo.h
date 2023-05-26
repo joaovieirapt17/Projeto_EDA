@@ -78,3 +78,12 @@ float calcular_distancia_entre_vertices(VERTICE* verticeOrigem, VERTICE* vertice
  * @return -2 se a aresta já existir.
  */
 int criar_aresta(NODE* grafo, char origem[], char destino[], float peso);
+
+/**
+ * @brief Funções responsáveis por guardar os vértices.
+ */
+int save_vertices(NODE* start);
+int load_vertices(NODE** vertices);
+void vertices_arestas_txt(NODE* vertices);
+void vertices_meios_txt(NODE* vertices);
+void guardar_vertices(NODE* vertices);

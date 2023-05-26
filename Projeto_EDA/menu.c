@@ -340,9 +340,9 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
             remover_meio(meios);
             any_key();
             break;
-   
+
         case 5:
-            guardar_meios(*meios);
+            guardar_vertices(*meios);
             printf("Meios de mobilidade guardados com sucesso!\n");
             any_key();
             break;
@@ -402,15 +402,20 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
             printf("Escolha o Vertice atraves do Geocode: ");
             scanf("%s", geocode);
             verticeEscolhido = find_vertice_by_geocode(*vertices, geocode);
+            if (verticeEscolhido == NULL) {
+                printf("Vertice não encontrado");
+                break;
+            }
+
             menu_gerir_meios(auth, utilizadores, &(verticeEscolhido->meios));
             break;
-/*
+
         case 5:
-            guardar_grafo();
+            guardar_vertices(*vertices);
             printf("Grafo guardado com sucesso!\n");
             any_key();
             break;
-*/
+
         case 0:
             printf("A sair do menu...\n");
             break;
@@ -648,7 +653,7 @@ int criar_meio_e_vertice(NODE** vertices) {
 
         switch (res) {
         case 0:
-            //save_vertices() -> Tenho de criar função!
+            guardar_vertices(vertices); 
             printf("\nMeio de mobilidade eletrica adicionado com sucesso.\n");
             return 0;
 
@@ -696,116 +701,6 @@ int ligar_vertices(NODE** vertices) {
         return -1;
     }
 }
-
-//Talvez não irei usar.
-int criar_meio(NODE** vertices) {
-    int opc, res, tipo_escolha; 
-    MEIO* meio = malloc(sizeof(MEIO)); // Aloca memória para um novo meio de mobilidade
-    VERTICE* vertice;
-
-    if (meio == NULL) return -3; // Erro na alocação de memória para o meio
-
-    do {
-        clear_menu();
-        printf("| NOVO MEIO DE MOBILIDADE ELETRICA:\n\n");
-
-        printf("  | Codigo: ");
-        scanf("%d", &meio->codigo);
-        fflush(stdin);
-
-        printf("  | Tipo:\n");
-        printf("    [1] Bicicleta\n");
-        printf("    [2] Trotinete\n");
-        printf("    [3] Mota\n");
-        printf("    [4] Carro\n");
-        printf("    Opcao: ");
-        scanf("%d", &tipo_escolha);
-        fflush(stdin);
-
-        if (tipo_escolha < 1 || tipo_escolha > 4) {
-            printf("\nOpção inválida! Escolha um número entre 1 e 4!\n");
-        }
-
-        switch (tipo_escolha) {
-        case 1:
-            strcpy(meio->tipo, "Bicicleta");
-            break;
-        case 2:
-            strcpy(meio->tipo, "Trotinete");
-            break;
-        case 3:
-            strcpy(meio->tipo, "Mota");
-            break;
-        case 4:
-            strcpy(meio->tipo, "Carro");
-            break;
-        default:
-            printf("Escolha inválida! Por favor, tente novamente.\n");
-            any_key();
-            continue;
-        }
-
-        printf("  | Bateria: ");
-        scanf("%f", &meio->bateria);
-        fflush(stdin);
-
-        printf("  | Autonomia: ");
-        scanf("%f", &meio->autonomia);
-        fflush(stdin);
-
-        printf("  | Custo: ");
-        scanf("%f", &meio->custo);
-        fflush(stdin);
-
-        printf("  | Geocode: ");
-        scanf("%s", meio->geocode);
-        fflush(stdin);
-
-        printf("  | Latitude: ");
-        scanf("%lf", &meio->latitude);
-        fflush(stdin);
-
-        printf("  | Longitude: ");
-        scanf("%lf", &meio->longitude);
-        fflush(stdin);
-
-        meio->status = 0;
-
-        vertice = find_vertice_by_geocode(*vertices, meio->geocode); // Verifica se o vértice já existe com base no geocódigo
-
-        if (vertice == NULL) { // Se o vértice não existe, cria um novo
-            free(meio); // Libera a memória alocada para o meio
-            return -1; // O vértice não existe, não é possível vincular o meio
-        }
-
-        // Adiciona o meio à lista de meios do vértice
-        res = add_meio(&(vertice->meios), meio);
-
-        switch (res) {
-        case 0:
-            //save_vertices() -> Tenho de criar função!
-            printf("\nMeio de mobilidade eletrica adicionado com sucesso.\n");
-            return 0;
-
-        case -1:
-            do {
-                clear_menu();
-                printf("Código de meio de mobilidade eletrica já existe.\n");
-                printf("[1] Tentar novamente!\n");
-                printf("[0] Cancelar\n\n");
-                printf("Opção:");
-                scanf("%i", &opc);
-                while (getchar() != '\n');
-            } while (opc < 0 || opc > 1);
-            break;
-        default:
-            break;
-        }
-    } while (opc != 0);
-
-    free(meio); // Libera a memória alocada para o meio
-    return -1;
-} 
 
 void listar_gestores_registados(NODE* utilizadores) {
     NODE* aux = NULL;
@@ -1327,7 +1222,7 @@ void alterar_dados_cliente(NODE** utilizadores) {
 
     guardar_users(*utilizadores);
 }
-void alterar_dados_meios(NODE** vertices) {
+void alterar_dados_meios(NODE** meios, NODE** vertices) {
     int opc = 1, selected;
     int codigo;
     MEIO* meio = NULL;
@@ -1336,28 +1231,16 @@ void alterar_dados_meios(NODE** vertices) {
             printf("Código do meio de mobilidade elétrica: ");
             scanf("%d", &codigo);
             fflush(stdin);
-            printf("Código do meio lido: %d\n", codigo);
 
-            NODE* aux_vertice = *vertices;
-            while (aux_vertice != NULL) {
-                VERTICE* vertice = (VERTICE*)aux_vertice->data;
-
-                NODE* aux_meio = vertice->meios;
-                while (aux_meio != NULL) {
-                    MEIO* current_meio = (MEIO*)aux_meio->data;
-             
-                    if (current_meio->codigo == codigo) {
-                        meio = current_meio;
-                        break;
-                    }
-                    aux_meio = aux_meio->next;
-                }
-                
+            NODE* aux_meio = *meios;
+            while (aux_meio != NULL) {
+                meio = (MEIO*)aux_meio->data;
+              
                 if (meio != NULL) {
                     break;
                 }
 
-                aux_vertice = aux_vertice->next;
+                aux_meio = aux_meio->next;
             }
 
         if (meio == NULL) {
@@ -1380,9 +1263,8 @@ void alterar_dados_meios(NODE** vertices) {
                 printf("[2] Bateria\n");
                 printf("[3] Autonomia\n");
                 printf("[4] Custo\n");
-                printf("[5] Geocode\n");
-                printf("[6] Latitude\n");
-                printf("[7] Longitude\n");
+                printf("[5] Latitude\n");
+                printf("[6] Longitude\n");
                 printf("[0] Sair\n");
                 printf("Opção: ");
                 scanf("%i", &selected);
@@ -1398,7 +1280,7 @@ void alterar_dados_meios(NODE** vertices) {
                     printf("| Novo tipo: ");
                     scanf(" %[^\n]", meio->tipo);
                     fflush(stdin);
-                    save_meios(*vertices);
+                    guardar_vertices(vertices);
                     printf("\nTipo alterado com sucesso!\n");
                     break;
 
@@ -1406,7 +1288,7 @@ void alterar_dados_meios(NODE** vertices) {
                     printf("| Nova bateria: ");
                     scanf("%f", &meio->bateria);
                     fflush(stdin);
-                    save_meios(*vertices);
+                    guardar_vertices(vertices);
                     printf("\nBateria alterada com sucesso!\n");
                     break;
 
@@ -1414,7 +1296,7 @@ void alterar_dados_meios(NODE** vertices) {
                     printf("| Nova autonomia: ");
                     scanf("%f", &meio->autonomia);
                     fflush(stdin);
-                    save_meios(*vertices);
+                    guardar_vertices(vertices);
                     printf("\nAutonomia alterada com sucesso!\n");
                     break;
 
@@ -1422,23 +1304,15 @@ void alterar_dados_meios(NODE** vertices) {
                     printf("| Novo custo: ");
                     scanf("%f", &meio->custo);
                     fflush(stdin);
-                    save_meios(*vertices);
+                    guardar_vertices(vertices);
                     printf("\nCusto alterado com sucesso!\n");
                     break;
 
-                case 5:
-                    printf("| Novo geocode: ");
-                    scanf("%s", meio->geocode);
-                    fflush(stdin);
-                    save_meios(*vertices);
-                    printf("\nGeocode alterado com sucesso!\n");
-                    break;
-
-                case 6:
+                   case 6:
                     printf("| Nova latitude: ");
                     scanf("%lf", &meio->latitude);
                     fflush(stdin);
-                    save_meios(*vertices);
+                    guardar_vertices(vertices);
                     printf("\nLatitude alterada com sucesso!\n");
                     break;
 
@@ -1446,7 +1320,7 @@ void alterar_dados_meios(NODE** vertices) {
                     printf("| Nova longitude: ");
                     scanf("%lf", &meio->longitude);
                     fflush(stdin);
-                    save_meios(*vertices);
+                    guardar_vertices(vertices);
                     printf("\nLongitude alterada com sucesso!\n");
                     break;
 
@@ -1527,7 +1401,7 @@ void remover_meio(NODE** vertices) {
         NODE* aux_vertice = *vertices;
         while (aux_vertice != NULL) {
             NODE** meios = &((VERTICE*)aux_vertice->data)->meios;
-            meio = find_meio_by_codigo(meios, codigo);
+            meio = find_meio_by_codigo(*meios, codigo); 
             if (meio != NULL) {
                 break;
             }
@@ -1620,7 +1494,7 @@ void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
 
                     // Salvar as alterações
                     guardar_users(*utilizadores);
-                    guardar_meios(*vertices);
+                    guardar_vertices(*vertices);
 
                     return;
                 }

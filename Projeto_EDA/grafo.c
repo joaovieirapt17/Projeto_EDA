@@ -270,3 +270,9 @@ void vertices_meios_txt(NODE* vertices) {
 		aux = aux->next;
 	}
 }
+
+void guardar_vertices(NODE* vertices) {
+	save_vertices(vertices); 
+	vertices_arestas_txt(vertices);
+	vertices_meios_txt(vertices);
+}
