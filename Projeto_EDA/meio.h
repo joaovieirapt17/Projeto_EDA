@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+
 #pragma once
 #include <stdio.h>
 #include "linkedlist.h"
@@ -61,14 +62,6 @@ int save_meios(NODE* start);
  */
 int save_meios_txt(NODE* start);
 
-/**
- * @brief Carrega os meios a partir de um arquivo binário.
- * @param start O ponteiro para o início da lista.
- * @return 0 em caso de sucesso.
- * @return -1 em caso de erro ao ler o arquivo.
- */
-int load_meios(NODE** start);
-
 void guardar_meios(NODE* meios);
 
 /**
@@ -79,4 +72,4 @@ void guardar_meios(NODE* meios);
 * @param lon2 Longitude do ponto 2.
 * @return A distância entre os pontos
 */
-double calcular_distancia(double lat1, double lon1, double lat2, double lon2); 
+double calcular_distancia(double lat1, double lon1, double lat2, double lon2);

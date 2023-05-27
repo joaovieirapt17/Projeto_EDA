@@ -80,6 +80,16 @@ float calcular_distancia_entre_vertices(VERTICE* verticeOrigem, VERTICE* vertice
 int criar_aresta(NODE* grafo, char origem[], char destino[], float peso);
 
 /**
+ * @brief Remove uma aresta do grafo.
+ * @param vertices Array de ponteiros para vértices do grafo.
+ * @param origem String que representa o código da origem da aresta a ser removida.
+ * @param destino String que representa o código do destino da aresta a ser removida.
+ * @return Retorna 1 em caso de sucesso na remoção da aresta. 
+ * @return Retorna -1 se o vértice de origem não existir ou se a aresta não for encontrada.
+ */
+int remover_aresta(NODE* vertices, char origem[], char destino[]);
+
+/**
  * @brief Funções responsáveis por guardar os vértices.
  */
 int save_vertices(NODE* start);

@@ -70,6 +70,7 @@ float calcular_distancia_entre_vertices(VERTICE* verticeOrigem, VERTICE* vertice
 }
 
 int criar_aresta(NODE* vertices, char origem[], char destino[], float peso) {
+
 	// Encontra os vértices de origem e destino
 	VERTICE* verticeOrigem = find_vertice_by_geocode(vertices, origem);
 	VERTICE* verticeDestino = find_vertice_by_geocode(vertices, destino);
@@ -105,12 +106,57 @@ int criar_aresta(NODE* vertices, char origem[], char destino[], float peso) {
 	return 1; //Sucesso
 }
 
+int remover_aresta(NODE* vertices, char origem[], char destino[]) {
+	// Encontra o vértice de origem
+	VERTICE* verticeOrigem = find_vertice_by_geocode(vertices, origem);
+
+	// Se o vértice de origem não existir, retorna -1
+	if (verticeOrigem == NULL) {
+		return -1;
+	}
+
+	// Inicializa os ponteiros para as arestas atual e anterior
+	NODE* arestaAtual = verticeOrigem->arestas;
+	NODE* arestaAnterior = NULL;
+
+	// Procura a aresta para remover
+	while (arestaAtual != NULL) {
+		ARESTA* arestaData = (ARESTA*)arestaAtual->data;
+
+		// Verifica se esta é a aresta que queremos remover
+		if (strcmp(arestaData->geocode, destino) == 0) {
+			// Se a aresta estiver no início da lista
+			if (arestaAnterior == NULL) {
+				verticeOrigem->arestas = arestaAtual->next;
+			}
+			// Se a aresta não estiver no início da lista
+			else {
+				arestaAnterior->next = arestaAtual->next;
+			}
+
+			// Liberta a memória da aresta e do nó que a contém
+			free(arestaData);
+			free(arestaAtual);
+
+			return 1; // Sucesso
+		}
+
+		// Move para a próxima aresta
+		arestaAnterior = arestaAtual;
+		arestaAtual = arestaAtual->next;
+	}
+
+	// Se chegarmos aqui, a aresta não foi encontrada
+	return -2;
+}
+
+
 int save_vertices(NODE* start) {
 	VERTICE* v = NULL;
 	NODE* aux, * a_aux = NULL;
 	int res;
 
-	// Empty the file
+	// Limpa o arquivo
 	remove("vertices.dat");
 
 	aux = start;
@@ -120,10 +166,10 @@ int save_vertices(NODE* start) {
 		v->numeroArestas = length(v->arestas);
 		v->numeroMeios = length(v->meios);
 
-		// Appends data to file
+		// Acrescenta os dados ao arquivo
 		res = appendToFile("vertices.dat", aux->data, sizeof(VERTICE));
 
-		// If failed, then delete file.
+		// Se falhou, então exclui o arquivo.
 		if (res != 0) {
 			remove("vertices.dat");
 			return -1;
@@ -134,7 +180,7 @@ int save_vertices(NODE* start) {
 		while (a_aux != NULL) {
 			res = appendToFile("vertices.dat", a_aux->data, sizeof(ARESTA));
 
-			// If failed, then delete file.
+			// Se falhou, então exclui o arquivo.
 			if (res != 0) {
 				remove("vertices.dat");
 				return -1;
@@ -148,7 +194,7 @@ int save_vertices(NODE* start) {
 		while (a_aux != NULL) {
 			res = appendToFile("vertices.dat", a_aux->data, sizeof(MEIO));
 
-			// If failed, then delete file.
+			// Se falhou, então exclui o arquivo.
 			if (res != 0) {
 				remove("vertices.dat");
 				return -1;
@@ -172,16 +218,16 @@ int load_vertices(NODE** vertices) {
 	if (fp == NULL) return -3;
 
 	do {
-		// Allocates memory for the data
+		// Aloca memória para os dados
 		VERTICE* vertice_data = (VERTICE*)malloc(sizeof(VERTICE));
 
-		// Reads budget data
+		// Lê os dados do vértice
 		res = fread(vertice_data, sizeof(VERTICE), 1, fp);
 
-		// Didn't read anything, then break the loop
+		// Se não leu nada, então sai do loop
 		if (res == 0) break;
 
-		// Reset pointer
+		// Reinicializa os ponteiros
 		vertice_data->arestas = NULL;
 		vertice_data->meios = NULL;
 
@@ -189,13 +235,13 @@ int load_vertices(NODE** vertices) {
 
 		for (i = 0; i < vertice_data->numeroArestas; i++) {
 
-			// Allocates memory for the data
+			// Aloca memória para os dados
 			ARESTA* aresta_data = (ARESTA*)malloc(sizeof(ARESTA));
 
-			// Reads details data
+			// Lê os dados da aresta
 			res = fread(aresta_data, sizeof(ARESTA), 1, fp);
 
-			// Didn't read anything, then break the loop
+			// Se não leu nada, então sai do loop
 			if (res == 0) break;
 
 			add_aresta(&vertice_data->arestas, aresta_data);
@@ -203,13 +249,13 @@ int load_vertices(NODE** vertices) {
 
 		for (i = 0; i < vertice_data->numeroMeios; i++) {
 
-			// Allocates memory for the data
+			// Aloca memória para os dados
 			MEIO* meio_data = (MEIO*)malloc(sizeof(MEIO));
 
-			// Reads details data
+			// Lê os dados do meio
 			res = fread(meio_data, sizeof(MEIO), 1, fp);
 
-			// Didn't read anything, then break the loop
+			// Se não ler nada, então sai do loop 
 			if (res == 0) break;
 
 			add_meio(&vertice_data->meios, meio_data);
@@ -236,13 +282,15 @@ void vertices_arestas_txt(NODE* vertices) {
 		while (a_aux != NULL) {
 			aresta = (ARESTA*)a_aux->data;
 
-			fprintf(fp, "%s;%s;%i\n", vertice->geocode, aresta->geocode, aresta->peso);
+			fprintf(fp, "%s;%s;%f\n", vertice->geocode, aresta->geocode, aresta->peso);
 
 			a_aux = a_aux->next;
 		}
 
 		aux = aux->next;
 	}
+
+	fclose(fp); 
 }
 
 void vertices_meios_txt(NODE* vertices) {
@@ -256,23 +304,25 @@ void vertices_meios_txt(NODE* vertices) {
 	while (aux != NULL) {
 		vertice = (VERTICE*)aux->data;
 
-		fprintf(fp, "&s;", vertice->geocode);
+		fprintf(fp, "%s;", vertice->geocode);
 
 		a_aux = vertice->meios;
 		while (a_aux != NULL) {
 			meio = (MEIO*)a_aux->data;
 
-			fprintf(fp, "%i,%lf,%lf\n", meio->codigo, meio->latitude, meio->longitude);
+			fprintf(fp, "%i,%f,%f\n", meio->codigo, meio->latitude, meio->longitude);
 
 			a_aux = a_aux->next;
 		}
 
 		aux = aux->next;
 	}
+
+	fclose(fp); 
 }
 
 void guardar_vertices(NODE* vertices) {
-	save_vertices(vertices); 
+	save_vertices(vertices);
 	vertices_arestas_txt(vertices);
 	vertices_meios_txt(vertices);
 }
