@@ -156,11 +156,6 @@ double calcular_distancia(double lat1, double lon1, double lat2, double lon2) {
 	double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 	double r = 6371; // raio médio da Terra em quilômetros
 
-	// Imprime valores intermediários e finais
-	printf("dlat: %f, dlon: %f, a: %f, c: %f\n", dlat, dlon, a, c);
-
 	return c * r;
-
-
 }
 

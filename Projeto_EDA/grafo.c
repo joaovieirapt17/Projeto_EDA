@@ -104,6 +104,8 @@ int criar_aresta(NODE* vertices, char origem[], char destino[], float peso) {
 	// Adiciona a nova aresta à lista de arestas do vértice de origem
 	push(&(verticeOrigem->arestas), novaAresta, sizeof(ARESTA));
 
+	save_vertices(vertices);
+
 	return 1; //Sucesso
 }
 
@@ -198,6 +200,8 @@ void dijkstra(NODE* vertices, char geocodeInicio[TAM]) {
 		}
 	}
 }
+
+
 
 
 int save_vertices(NODE* start) {
@@ -376,3 +380,4 @@ void guardar_vertices(NODE* vertices) {
 	vertices_arestas_txt(vertices);
 	vertices_meios_txt(vertices);
 }
+

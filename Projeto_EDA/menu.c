@@ -304,7 +304,7 @@ void menu_gerir_clientes(USER auth, NODE** utilizadores) {
 }
 
 
-void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
+void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** vertices, NODE** meios) {
     int escolha;
 
     do {
@@ -313,6 +313,7 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
         printf("|        MENU GERIR MEIOS DE MOBILIDADE ELETRICA      |\n");
         printf("+-----------------------------------------------------+\n\n");
 
+        printf("[1] Adicionar Meio\n");
         printf("[1] Alterar Dados do Meio de Mobilidade\n");
         printf("[2] Listar Meios Disponiveis (Ordem decrescente de Autonomia)\n");
         printf("[4] Remover Meio\n");
@@ -326,23 +327,23 @@ void menu_gerir_meios(USER auth, NODE** utilizadores, NODE** meios) {
 
         switch (escolha) {
 
-        case 1:
-            alterar_dados_meios(meios);
+        case 2:
+            alterar_dados_meios(meios, *vertices);
             any_key();
             break;
 
-        case 2:
+        case 3:
             listar_meios_disponiveis_decrescente_autonomia(*meios);
             any_key();
             break;
 
         case 4:
-            remover_meio(meios);
+            remover_meio(meios, *vertices);
             any_key();
             break;
 
         case 5:
-            guardar_vertices(*meios);
+            guardar_vertices(*vertices);
             printf("Meios de mobilidade guardados com sucesso!\n");
             any_key();
             break;
@@ -373,7 +374,7 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
         printf("[2] Listar Vertices\n");
         printf("[3] Conectar Vertices\n");
         printf("[4] Desconectar Vertices\n");
-        printf("[5] Gerir Meios de Mobilidade do Vertice\n");
+        printf("[5] Gerir Meios correspondentes ao Vertice\n");
         printf("[6] Encontrar Caminho mais Curto entre Vertices\n");
         printf("[7] Guardar Grafo\n");
         printf("[0] Sair\n");
@@ -414,7 +415,7 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
                 break;
             }
 
-            menu_gerir_meios(auth, utilizadores, &(verticeEscolhido->meios));
+            menu_gerir_meios(auth, utilizadores, vertices, &(verticeEscolhido->meios));
             break;
 
         case 6:
@@ -703,9 +704,11 @@ int ligar_vertices(NODE** vertices) {
     case 1:
         printf("\nVertices Conectados com Sucesso.\n");
         return 0;
+
     case -1:
         printf("\nVertice de Origem ou Destino não Encontrado.\n");
         return -1;
+
     case -2:
         printf("\nAresta já Existe.\n");
         return -1;
@@ -713,7 +716,6 @@ int ligar_vertices(NODE** vertices) {
         return -1;
     }
 }
-
 int desconectar_vertices(NODE** vertices) {
     char origem[TAM];
     char destino[TAM];
@@ -974,27 +976,23 @@ void listar_vertices_existentes(NODE* vertices) {
         }
     }
 }
-void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
-    NODE* aux_vertice = vertices;
+void listar_meios_disponiveis_decrescente_autonomia(NODE* meios) {
     MEIO* meio = NULL;
     MEIO temp;
     int pos = 0, size = 0, i, j;
 
     MEIO* lista = NULL;
-    NODE* aux = NULL;
+    NODE* aux = meios;
 
     // Conta o número de meios de mobilidade disponíveis
-    while (aux_vertice != NULL) {
-        aux = ((VERTICE*)aux_vertice->data)->meios;
-        while (aux != NULL) {
-            meio = (MEIO*)aux->data;
-            if (meio->status == 0) {
-                size++;
-            }
-            aux = aux->next;
+    while (aux != NULL) {
+        meio = (MEIO*)aux->data;
+        if (meio->status == 0) {
+            size++;
         }
-        aux_vertice = aux_vertice->next;
+        aux = aux->next;
     }
+
 
     if (size == 0) {
         printf("Nenhum meio disponivel!\n");
@@ -1002,21 +1000,17 @@ void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
     }
 
     lista = (MEIO*)calloc(size, sizeof(MEIO));
-    aux_vertice = vertices;
+    aux = meios;
     pos = 0;
 
-    // Cria a lista de meios de mobilidade disponíveis
-    while (aux_vertice != NULL) {
-        aux = ((VERTICE*)aux_vertice->data)->meios;
-        while (aux != NULL) {
-            meio = (MEIO*)aux->data;
-            if (meio->status == 0) {
-                lista[pos] = *meio;
-                pos++;
-            }
-            aux = aux->next;
+   // Cria a lista de meios de mobilidade disponíveis
+    while (aux != NULL) {
+        meio = (MEIO*)aux->data;
+        if (meio->status == 0) {
+            lista[pos] = *meio;
+            pos++;
         }
-        aux_vertice = aux_vertice->next;
+        aux = aux->next;
     }
 
     // INSERTION SORT
@@ -1261,26 +1255,26 @@ void alterar_dados_cliente(NODE** utilizadores) {
 
     guardar_users(*utilizadores);
 }
-void alterar_dados_meios(NODE** meios) {
+void alterar_dados_meios(NODE** meios, NODE* vertices) {
     int opc = 1, selected;
     int codigo;
     MEIO* meio = NULL;
 
-        do {
-            printf("Código do meio de mobilidade elétrica: ");
-            scanf("%d", &codigo);
-            fflush(stdin);
+    do {
+        printf("Código do meio de mobilidade elétrica: ");
+        scanf("%d", &codigo);
+        fflush(stdin);
 
-            NODE* aux_meio = *meios;
-            while (aux_meio != NULL) {
-                meio = (MEIO*)aux_meio->data;
-              
-                if (meio != NULL) {
-                    break;
-                }
+        NODE* aux_meio = *meios;
+        while (aux_meio != NULL) {
+            meio = (MEIO*)aux_meio->data;
 
-                aux_meio = aux_meio->next;
+            if (meio != NULL && meio->codigo == codigo) {
+                break;
             }
+
+            aux_meio = aux_meio->next;
+        }
 
         if (meio == NULL) {
             do {
@@ -1313,13 +1307,13 @@ void alterar_dados_meios(NODE** meios) {
 
                 switch (selected) {
                 case 0:
+                    guardar_vertices(vertices);
                     return;
 
                 case 1:
                     printf("| Novo tipo: ");
                     scanf(" %[^\n]", meio->tipo);
                     fflush(stdin);
-                    //guardar_vertices(vertices);
                     printf("\nTipo alterado com sucesso!\n");
                     break;
 
@@ -1327,7 +1321,6 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Nova bateria: ");
                     scanf("%f", &meio->bateria);
                     fflush(stdin);
-                    //guardar_vertices(vertices);
                     printf("\nBateria alterada com sucesso!\n");
                     break;
 
@@ -1335,7 +1328,6 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Nova autonomia: ");
                     scanf("%f", &meio->autonomia);
                     fflush(stdin);
-                   //guardar_vertices(vertices);
                     printf("\nAutonomia alterada com sucesso!\n");
                     break;
 
@@ -1343,23 +1335,20 @@ void alterar_dados_meios(NODE** meios) {
                     printf("| Novo custo: ");
                     scanf("%f", &meio->custo);
                     fflush(stdin);
-                   //guardar_vertices(vertices);
                     printf("\nCusto alterado com sucesso!\n");
                     break;
 
-                   case 6:
+                case 5:
                     printf("| Nova latitude: ");
                     scanf("%lf", &meio->latitude);
                     fflush(stdin);
-                    //guardar_vertices(vertices);
                     printf("\nLatitude alterada com sucesso!\n");
                     break;
 
-                case 7:
+                case 6:
                     printf("| Nova longitude: ");
                     scanf("%lf", &meio->longitude);
                     fflush(stdin);
-                    //guardar_vertices(vertices);
                     printf("\nLongitude alterada com sucesso!\n");
                     break;
 
@@ -1375,8 +1364,10 @@ void alterar_dados_meios(NODE** meios) {
                 clear_menu();
             } while (selected != 0);
         }
+        guardar_vertices(vertices);
     } while (opc != 0);
 }
+
 
 
 void remover_cliente(NODE** utilizadores) {
@@ -1423,7 +1414,7 @@ void remover_cliente(NODE** utilizadores) {
         }
     } while (opc != 0);
 }
-void remover_meio(NODE** vertices) {
+void remover_meio(NODE** meios, NODE* vertices) {
     int opc = 0;
     int codigo;
     MEIO* meio = NULL;
@@ -1431,20 +1422,11 @@ void remover_meio(NODE** vertices) {
     do {
         clear_menu();
 
-        printf("Código do meio: ");
+        printf("COdigo do meio: ");
         scanf("%i", &codigo);
         fflush(stdin);
 
-        // Procurar o meio pelo código nos vértices
-        NODE* aux_vertice = *vertices;
-        while (aux_vertice != NULL) {
-            NODE** meios = &((VERTICE*)aux_vertice->data)->meios;
-            meio = find_meio_by_codigo(*meios, codigo); 
-            if (meio != NULL) {
-                break;
-            }
-            aux_vertice = aux_vertice->next;
-        }
+        meio = find_meio_by_codigo(*meios, codigo);
 
         if (meio == NULL) {
             printf("Meio não existe!\n");
@@ -1453,10 +1435,10 @@ void remover_meio(NODE** vertices) {
             fflush(stdin);
         }
         else {
-            switch (remove_meio_by_codigo(&((VERTICE*)aux_vertice->data)->meios, codigo)) {
+            switch (remove_meio_by_codigo(meios, codigo)) {
             case 0:
                 printf("Meio removido com sucesso!\n");
-                guardar_vertices(*vertices);
+                guardar_vertices(vertices);
                 return;
                 break;
 
@@ -1471,6 +1453,8 @@ void remover_meio(NODE** vertices) {
 
     } while (opc != 0);
 }
+
+
 
 
 void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {

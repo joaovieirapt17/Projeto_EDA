@@ -23,7 +23,7 @@ int menu_cliente(USER auth, NODE** users, NODE** vertices);
 int menu_gestor(USER auth, NODE** users, NODE** vertices);
 void menu_gerir_gestores(USER auth, NODE** users);
 void menu_gerir_clientes(USER auth, NODE** users);
-void menu_gerir_meios(USER auth, NODE** users, NODE** vertices);
+void menu_gerir_meios(USER auth, NODE** users, NODE** meios, NODE** vertices);
 int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices); 
 
 
@@ -117,9 +117,10 @@ void remover_cliente(NODE** utilizadores);
 
 /**
  * @brief Remove um meio de mobilidade do vértice.
+ * @param meios Ponteiro para a lista de meios. 
  * @param vertices O ponteiro para a lista de vértices.
  */
-void remover_meio(NODE** vertices);
+void remover_meio(NODE** meios,NODE** vertices);
 
 /**
  * @brief Aluga um meio de mobilidade.
@@ -136,6 +137,10 @@ void alugar_meio(NODE** vertices, NODE** utilizadores, USER user);
  */
 void carregar_saldo(USER auth, NODE** utilizadores);
 
+/**
+ * @brief Encontra o caminho mais curto entre dois vértices no grafo usando o algoritmo de Dijkstra.
+ * @param vertices Um ponteiro para o ponteiro do primeiro nó do grafo.
+ */
 void encontrar_caminho_mais_curto(NODE** vertices); 
 
 
