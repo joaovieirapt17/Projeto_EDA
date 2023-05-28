@@ -31,15 +31,6 @@ int criar_gestor(NODE** users);
 int criar_cliente(NODE** users);
 
 /**
- * Cria um novo meio de mobilidade elétrica e o adiciona a um vértice existente.
- * @param vertices Ponteiro para o ponteiro da lista de vértices.
- * @return  0 em caso de sucesso na criação e adição do meio 
- * @return -1 se o vértice não existe ou não pode ser vinculado
- * @return -3 se houve erro na alocação de memória para o meio.
- */
-int criar_meio(NODE** vertices);
-
-/**
  * Cria um novo meio de mobilidade elétrica e um novo vértice (se necessário) e adiciona o meio à lista de meios do vértice.
  * @param vertices Ponteiro para o ponteiro da lista de vértices.
  * @return  0 em caso de sucesso na criação do meio e vértice.
@@ -73,7 +64,7 @@ void listar_clientes_registados(NODE* users);
  * @brief Lista os meios de mobilidade disponíveis em ordem decrescente de autonomia.
  * @param vertices A lista de vértices do grafo.
  */
-void listar_meios_disponiveis_decrescente_autonomia(NODE* vertices);
+void listar_meios_disponiveis_decrescente_autonomia(NODE* meios);
 
 /**
  * @brief Lista os meios de mobilidade em um vértice com base em um geocódigo.
@@ -97,7 +88,7 @@ void alterar_dados_cliente(NODE** users);
  * @brief Altera os dados de um meio de mobilidade elétrica.
  * @param vertices Ponteiro para a lista de vértices.
  */
-void alterar_dados_meios(NODE** vertices);
+void alterar_dados_meios(NODE** meios);
 
 /**
  * @brief Altera os dados do próprio cliente.
@@ -144,6 +135,8 @@ void alugar_meio(NODE** vertices, NODE** utilizadores, USER user);
  * @param utilizadores Ponteiro para a lista de utilizadores.
  */
 void carregar_saldo(USER auth, NODE** utilizadores);
+
+void encontrar_caminho_mais_curto(NODE** vertices); 
 
 
 

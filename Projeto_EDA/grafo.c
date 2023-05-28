@@ -4,7 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "grafo.h"
-
+#include <limits.h>
+#define INFINITO INT_MAX
 
 int add_vertice(NODE** start, VERTICE* vertice) {
 	VERTICE* result = find_vertice_by_geocode(*start, vertice->geocode);
@@ -148,6 +149,54 @@ int remover_aresta(NODE* vertices, char origem[], char destino[]) {
 
 	// Se chegarmos aqui, a aresta não foi encontrada
 	return -2;
+}
+
+void dijkstra(NODE* vertices, char geocodeInicio[TAM]) {
+	NODE* verticeAtual = vertices;
+	VERTICE* vertice = NULL;
+	while (verticeAtual != NULL) {
+		vertice = (VERTICE*)verticeAtual->data;
+		if (strcmp(vertice->geocode, geocodeInicio) == 0) {
+			vertice->distancia = 0;
+		}
+		else {
+			vertice->distancia = INFINITO;
+		}
+		vertice->visitado = 0;
+		vertice->anterior = NULL;
+		verticeAtual = verticeAtual->next;
+	}
+
+	while (1) {
+		verticeAtual = vertices;
+		VERTICE* verticeMenor = NULL;
+		while (verticeAtual != NULL) {
+			vertice = (VERTICE*)verticeAtual->data;
+			if (vertice->visitado == 0 && (verticeMenor == NULL || vertice->distancia < verticeMenor->distancia)) {
+				verticeMenor = vertice;
+			}
+			verticeAtual = verticeAtual->next;
+		}
+
+		if (verticeMenor == NULL) {
+			break;
+		}
+
+		verticeMenor->visitado = 1;
+
+		verticeAtual = vertices;
+		while (verticeAtual != NULL) {
+			vertice = (VERTICE*)verticeAtual->data;
+			if (vertice->visitado == 0) {
+				int distanciaEntreVertices = calcular_distancia_entre_vertices(verticeMenor, vertice);
+				if (distanciaEntreVertices != -1 && verticeMenor->distancia + distanciaEntreVertices < vertice->distancia) {
+					vertice->distancia = verticeMenor->distancia + distanciaEntreVertices;
+					vertice->anterior = verticeMenor;
+				}
+			}
+			verticeAtual = verticeAtual->next;
+		}
+	}
 }
 
 
@@ -310,7 +359,7 @@ void vertices_meios_txt(NODE* vertices) {
 		while (a_aux != NULL) {
 			meio = (MEIO*)a_aux->data;
 
-			fprintf(fp, "%i,%f,%f\n", meio->codigo, meio->latitude, meio->longitude);
+			fprintf(fp, "%i,%lf,%lf\n", meio->codigo, meio->latitude, meio->longitude);
 
 			a_aux = a_aux->next;
 		}
@@ -320,6 +369,7 @@ void vertices_meios_txt(NODE* vertices) {
 
 	fclose(fp); 
 }
+
 
 void guardar_vertices(NODE* vertices) {
 	save_vertices(vertices);

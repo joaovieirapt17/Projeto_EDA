@@ -374,7 +374,8 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
         printf("[3] Conectar Vertices\n");
         printf("[4] Desconectar Vertices\n");
         printf("[5] Gerir Meios de Mobilidade do Vertice\n");
-        printf("[6] Guardar Grafo\n");
+        printf("[6] Encontrar Caminho mais Curto entre Vertices\n");
+        printf("[7] Guardar Grafo\n");
         printf("[0] Sair\n");
         printf("Opcao: ");
         scanf("%d", &escolha);
@@ -417,6 +418,11 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
             break;
 
         case 6:
+            encontrar_caminho_mais_curto(vertices); 
+            any_key();
+            break;
+
+         case 7:
             guardar_vertices(*vertices);
             printf("Grafo guardado com sucesso!\n");
             any_key();
@@ -1255,7 +1261,7 @@ void alterar_dados_cliente(NODE** utilizadores) {
 
     guardar_users(*utilizadores);
 }
-void alterar_dados_meios(NODE** meios, NODE** vertices) {
+void alterar_dados_meios(NODE** meios) {
     int opc = 1, selected;
     int codigo;
     MEIO* meio = NULL;
@@ -1313,7 +1319,7 @@ void alterar_dados_meios(NODE** meios, NODE** vertices) {
                     printf("| Novo tipo: ");
                     scanf(" %[^\n]", meio->tipo);
                     fflush(stdin);
-                    guardar_vertices(vertices);
+                    //guardar_vertices(vertices);
                     printf("\nTipo alterado com sucesso!\n");
                     break;
 
@@ -1321,7 +1327,7 @@ void alterar_dados_meios(NODE** meios, NODE** vertices) {
                     printf("| Nova bateria: ");
                     scanf("%f", &meio->bateria);
                     fflush(stdin);
-                    guardar_vertices(vertices);
+                    //guardar_vertices(vertices);
                     printf("\nBateria alterada com sucesso!\n");
                     break;
 
@@ -1329,7 +1335,7 @@ void alterar_dados_meios(NODE** meios, NODE** vertices) {
                     printf("| Nova autonomia: ");
                     scanf("%f", &meio->autonomia);
                     fflush(stdin);
-                    guardar_vertices(vertices);
+                   //guardar_vertices(vertices);
                     printf("\nAutonomia alterada com sucesso!\n");
                     break;
 
@@ -1337,7 +1343,7 @@ void alterar_dados_meios(NODE** meios, NODE** vertices) {
                     printf("| Novo custo: ");
                     scanf("%f", &meio->custo);
                     fflush(stdin);
-                    guardar_vertices(vertices);
+                   //guardar_vertices(vertices);
                     printf("\nCusto alterado com sucesso!\n");
                     break;
 
@@ -1345,7 +1351,7 @@ void alterar_dados_meios(NODE** meios, NODE** vertices) {
                     printf("| Nova latitude: ");
                     scanf("%lf", &meio->latitude);
                     fflush(stdin);
-                    guardar_vertices(vertices);
+                    //guardar_vertices(vertices);
                     printf("\nLatitude alterada com sucesso!\n");
                     break;
 
@@ -1353,7 +1359,7 @@ void alterar_dados_meios(NODE** meios, NODE** vertices) {
                     printf("| Nova longitude: ");
                     scanf("%lf", &meio->longitude);
                     fflush(stdin);
-                    guardar_vertices(vertices);
+                    //guardar_vertices(vertices);
                     printf("\nLongitude alterada com sucesso!\n");
                     break;
 
@@ -1578,3 +1584,36 @@ void carregar_saldo(USER auth, NODE** utilizadores) {
     printf("Saldo atual: %.2f\n", saldo_atual);
 }
 
+void encontrar_caminho_mais_curto(NODE** vertices) {
+    char geocodeInicio[TAM];
+    char geocodeFim[TAM];
+    VERTICE* verticeInicio = NULL;
+    VERTICE* verticeFim = NULL;
+    VERTICE* vertice = NULL;
+
+    printf("Introduza o geocode do vertice de inicio: ");
+    scanf("%s", geocodeInicio);
+    verticeInicio = find_vertice_by_geocode(*vertices, geocodeInicio);
+    if (verticeInicio == NULL) {
+        printf("Vertice de inicio nao encontrado\n");
+        return;
+    }
+
+    printf("Introduza o geocode do vertice de destino: ");
+    scanf("%s", geocodeFim);
+    verticeFim = find_vertice_by_geocode(*vertices, geocodeFim);
+    if (verticeFim == NULL) {
+        printf("Vertice de destino nao encontrado\n");
+        return;
+    }
+
+    // Executar o algoritmo de Dijkstra
+    dijkstra(*vertices, geocodeInicio);
+
+    // Imprimir o caminho mais curto
+    printf("Caminho mais curto de %s para %s: ", geocodeInicio, geocodeFim);
+    for (vertice = verticeFim; vertice != NULL; vertice = vertice->anterior) {
+        printf("%s ", vertice->geocode);
+    }
+    printf("\n");
+}

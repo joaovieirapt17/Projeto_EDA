@@ -19,6 +19,10 @@ typedef struct vertice {
 	NODE* meios; // Lista ligada com os codigos dos meios de transporte existentes neste geocodigo
 	double latitude;
 	double longitude;
+	int visitado; // 0 = não visitado, 1 = visitado
+	float distancia; //distancia do vertice inicial e o final
+	struct vertice* anterior; // vértice anterior no caminho mais curto do vértice inicial até este vértice
+
 }VERTICE;
 
 /**
@@ -88,6 +92,13 @@ int criar_aresta(NODE* grafo, char origem[], char destino[], float peso);
  * @return Retorna -1 se o vértice de origem não existir ou se a aresta não for encontrada.
  */
 int remover_aresta(NODE* vertices, char origem[], char destino[]);
+
+/**
+ * @brief Implementa o algoritmo de Dijkstra para encontrar o caminho mais curto em um grafo.
+ * @param vertices Um ponteiro para o primeiro nó do grafo.
+ * @param geocodeInicio O código geográfico do vértice de partida.
+ */
+void dijkstra(NODE* vertices, char geocodeInicio[TAM]); 
 
 /**
  * @brief Funções responsáveis por guardar os vértices.
