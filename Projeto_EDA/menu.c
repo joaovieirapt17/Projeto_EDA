@@ -105,7 +105,7 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios , NODE** vertices)
         switch (escolha) {
 
         case 1:
-            alugar_meio(vertices, utilizadores, auth);
+            alugar_meio(meios, utilizadores, auth);
             any_key();
             break;
 
@@ -115,12 +115,12 @@ int menu_cliente(USER auth, NODE** utilizadores, NODE** meios , NODE** vertices)
             break;
 
         case 3: 
-            listar_meios_vertice_geocode(*vertices);
+            listar_meios_vertice_geocode(*meios);
             any_key();
             break;
             
         case 4: 
-            listar_meios_proximos(*vertices); 
+            listar_meios_proximos(*meios); 
             any_key();
             break;
 
@@ -159,7 +159,6 @@ int menu_gestor(USER auth, NODE** utilizadores, NODE** vertices) {
 
         printf("[ 1 ] Gerir Gestores\n");
         printf("[ 2 ] Gerir Clientes\n");
-        //printf("[ 3 ] Gerir Meios de Mobilidade Eletrica\n");
         printf("[ 3 ] Gerir Grafo\n");
         printf("[ 9 ] Terminar a Sessao\n");
         printf("[ 0 ] Sair\n\n");
@@ -783,7 +782,6 @@ int criar_meio_dentro_vertice(NODE** meios, NODE** vertices) {
 
     return 0;
 }
-
 int ligar_vertices(NODE** vertices) {
     float peso = 0.0; 
     char origem[TAM];
@@ -799,6 +797,7 @@ int ligar_vertices(NODE** vertices) {
     switch (res) {
     case 1:
         printf("\nVertices Conectados com Sucesso.\n");
+        guardar_vertices(*vertices);
         return 0;
 
     case -1:
@@ -1626,8 +1625,7 @@ void remover_meio(NODE** meios, NODE* vertices) {
 
 
 void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
-    int codigo, opc = 0;
-    float custo, saldo, new_saldo;
+    int codigo;
     USER* user = NULL;
 
     // Mostra o saldo do usuário
@@ -1636,76 +1634,53 @@ void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
     // Listar meios próximos disponíveis
     listar_meios_proximos(*vertices);
 
-    do {
-        printf("Codigo do meio a alugar: ");
-        scanf("%d", &codigo);
-        fflush(stdin);
+    printf("Codigo do meio a alugar: ");
+    scanf("%d", &codigo);
+    fflush(stdin);
 
-        // Encontrar o meio pelo código nos vértices
-        NODE* aux_vertice = *vertices;
-        while (aux_vertice != NULL) {
-            NODE* aux_meio = ((VERTICE*)aux_vertice->data)->meios;
-            while (aux_meio != NULL) {
-                MEIO* meio = (MEIO*)aux_meio->data;
-                if (meio->codigo == codigo) {
-                    // Verificar se o meio já está alugado
-                    if (meio->status == 1) {
-                        printf("Meio já se encontra alugado!\n");
-                        printf("Tentar novamente? 0 - cancelar, ou 1!\n");
-                        scanf("%i", &opc);
-                        fflush(stdin);
-                        break;
-                    }
-
-                    // Calcular o custo do aluguel
-                    custo = meio->custo;
-
-                    // Verificar se o usuário tem saldo suficiente
-                    saldo = auth.saldo;
-                    if (saldo < custo) {
-                        printf("Saldo insuficiente para alugar este meio de mobilidade!\n");
-                        printf("Tentar novamente? 0 - cancelar, ou 1!\n");
-                        scanf("%i", &opc);
-                        fflush(stdin);
-                        break;
-                    }
-
-                    // Atualizar o saldo do usuário
-                    new_saldo = saldo - custo;
-
-                    user = find_user_by_username(*utilizadores, auth.username);
-                    user->saldo = new_saldo;
-
-                    // Atualizar o status do meio
-                    meio->status = 1;
-
-                    // Mostrar o sucesso do aluguel
-                    printf("Meio de mobilidade alugado com sucesso!\n\n");
-                    printf("Novo saldo: %.2f\n", new_saldo);
-
-                    // Salvar as alterações
-                    guardar_users(*utilizadores);
-                    guardar_vertices(*vertices);
-
+    // Encontrar o meio pelo código nos vértices
+    NODE* aux_vertice = *vertices;
+    while (aux_vertice != NULL) {
+        VERTICE* vertice = (VERTICE*)aux_vertice->data;
+        NODE* aux_meio = vertice->meios;
+        while (aux_meio != NULL) {
+            MEIO* meio = (MEIO*)aux_meio->data;
+            if (meio->codigo == codigo) {
+                // Verificar se o meio já está alugado
+                if (meio->status == 1) {
+                    printf("Meio já se encontra alugado!\n");
                     return;
                 }
-                aux_meio = aux_meio->next;
+
+                // Verificar se o usuário tem saldo suficiente
+                if (auth.saldo < meio->custo) {
+                    printf("Saldo insuficiente para alugar este meio de mobilidade!\n");
+                    return;
+                }
+
+                // Atualizar o saldo do usuário
+                user = find_user_by_username(*utilizadores, auth.username);
+                user->saldo -= meio->custo;
+
+                // Atualizar o status do meio
+                meio->status = 1;
+
+                // Mostrar o sucesso do aluguel
+                printf("Meio de mobilidade alugado com sucesso!\n\n");
+                printf("Novo saldo: %.2f\n", user->saldo);
+
+                // Salvar as alterações
+                guardar_users(*utilizadores);
+                guardar_vertices(*vertices);
+
+                return;
             }
-
-            if (aux_meio != NULL) {
-                break;
-            }
-
-            aux_vertice = aux_vertice->next;
+            aux_meio = aux_meio->next;
         }
+        aux_vertice = aux_vertice->next;
+    }
 
-        if (aux_vertice == NULL) {
-            printf("Meio não existe!\n");
-            printf("Tentar novamente? 0 - cancelar, ou 1!\n");
-            scanf("%i", &opc);
-            fflush(stdin);
-        }
-    } while (opc != 0);
+    printf("Meio não existe!\n");
 }
 
 
@@ -1767,7 +1742,6 @@ void encontrar_caminho_mais_curto(NODE** vertices) {
         printf("Vertice de destino nao encontrado\n");
         return;
     }
-
 
     // Executar o algoritmo de Dijkstra
     dijkstra(*vertices, geocodeInicio);
