@@ -63,6 +63,7 @@ ARESTA* find_aresta_by_geocode(NODE* start, char geocode[TAM]) {
 	return NULL;
 }
 
+
 // Utiliza a função "calcular_distancia() -> fórmula de Haversine
 float calcular_distancia_entre_vertices(VERTICE* verticeOrigem, VERTICE* verticeDestino) {
 	float distancia = calcular_distancia(verticeOrigem->latitude, verticeOrigem->longitude,
@@ -186,23 +187,18 @@ void dijkstra(NODE* vertices, char geocodeInicio[TAM]) {
 
 		verticeMenor->visitado = 1;
 
-		verticeAtual = vertices;
-		while (verticeAtual != NULL) {
-			vertice = (VERTICE*)verticeAtual->data;
-			if (vertice->visitado == 0) {
-				int distanciaEntreVertices = calcular_distancia_entre_vertices(verticeMenor, vertice);
-				if (distanciaEntreVertices != -1 && verticeMenor->distancia + distanciaEntreVertices < vertice->distancia) {
-					vertice->distancia = verticeMenor->distancia + distanciaEntreVertices;
-					vertice->anterior = verticeMenor;
-				}
+		NODE* arestaAtual = verticeMenor->arestas;
+		while (arestaAtual != NULL) {
+			ARESTA* aresta = (ARESTA*)arestaAtual->data;
+			VERTICE* verticeDestino = find_vertice_by_geocode(vertices, aresta->geocode);
+			if (verticeDestino->visitado == 0 && verticeMenor->distancia + aresta->peso < verticeDestino->distancia) {
+				verticeDestino->distancia = verticeMenor->distancia + aresta->peso;
+				verticeDestino->anterior = verticeMenor;
 			}
-			verticeAtual = verticeAtual->next;
+			arestaAtual = arestaAtual->next;
 		}
 	}
 }
-
-
-
 
 int save_vertices(NODE* start) {
 	VERTICE* v = NULL;
@@ -357,13 +353,13 @@ void vertices_meios_txt(NODE* vertices) {
 	while (aux != NULL) {
 		vertice = (VERTICE*)aux->data;
 
-		fprintf(fp, "%s;", vertice->geocode);
+		//fprintf(fp, "%s;", vertice->geocode);
 
 		a_aux = vertice->meios;
 		while (a_aux != NULL) {
 			meio = (MEIO*)a_aux->data;
 
-			fprintf(fp, "%i,%lf,%lf\n", meio->codigo, meio->latitude, meio->longitude);
+			fprintf(fp, "%s;%i,%lf,%lf\n", vertice->geocode, meio->codigo, meio->latitude, meio->longitude);
 
 			a_aux = a_aux->next;
 		}

@@ -120,7 +120,7 @@ void remover_cliente(NODE** utilizadores);
  * @param meios Ponteiro para a lista de meios. 
  * @param vertices O ponteiro para a lista de vértices.
  */
-void remover_meio(NODE** meios,NODE** vertices);
+void remover_meio(NODE** meios, NODE* vertices);
 
 /**
  * @brief Aluga um meio de mobilidade.
@@ -142,6 +142,11 @@ void carregar_saldo(USER auth, NODE** utilizadores);
  * @param vertices Um ponteiro para o ponteiro do primeiro nó do grafo.
  */
 void encontrar_caminho_mais_curto(NODE** vertices); 
+
+int criar_meio_dentro_vertice(NODE** meios, NODE** vertices);
+
+void listar_todos_meios_disponiveis_decrescente_autonomia(NODE* vertices);
+
 
 
 
