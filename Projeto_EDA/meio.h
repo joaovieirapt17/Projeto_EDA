@@ -15,6 +15,7 @@ typedef struct {
     int status;         // Status do meio de mobilidade (0 - disponível, 1 - alugado)
     double latitude;    // Latitude do meio
     double longitude;   // Longitude do meio
+    float volume;       // Armazena o volume de cada meio 
 } MEIO;
 
 /**

@@ -100,6 +100,12 @@ int remover_aresta(NODE* vertices, char origem[], char destino[]);
  */
 void dijkstra(NODE* vertices, char geocodeInicio[TAM]); 
 
+VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeFim[TAM]); 
+
+NODE* listar_meios_menos_50(NODE* vertices); 
+
+void recolha_meios(NODE* vertices, char geocodeInicio[TAM]);
+
 /**
  * @brief Funções responsáveis por guardar os vértices.
  */

@@ -19,7 +19,7 @@ void any_key();
 
 int initial_menu(NODE* users, USER** auth);
 int login_menu(NODE* users, USER** auth);
-int menu_cliente(USER auth, NODE** users, NODE** vertices);
+int menu_cliente(USER auth, NODE** users, NODE ** meios);
 int menu_gestor(USER auth, NODE** users, NODE** vertices);
 void menu_gerir_gestores(USER auth, NODE** users);
 void menu_gerir_clientes(USER auth, NODE** users);
@@ -88,7 +88,7 @@ void alterar_dados_cliente(NODE** users);
  * @brief Altera os dados de um meio de mobilidade elétrica.
  * @param vertices Ponteiro para a lista de vértices.
  */
-void alterar_dados_meios(NODE** meios);
+void alterar_dados_meios(NODE** meios, NODE* vertices); 
 
 /**
  * @brief Altera os dados do próprio cliente.
@@ -146,6 +146,8 @@ void encontrar_caminho_mais_curto(NODE** vertices);
 int criar_meio_dentro_vertice(NODE** meios, NODE** vertices);
 
 void listar_todos_meios_disponiveis_decrescente_autonomia(NODE* vertices);
+
+void recolher_meios_baixa_bateria(NODE** vertices); 
 
 
 

@@ -6,6 +6,7 @@
 #include "grafo.h"
 #include <limits.h>
 #define INFINITO INT_MAX
+#define VOLUME_MAX_CAMIAO 30
 
 int add_vertice(NODE** start, VERTICE* vertice) {
 	VERTICE* result = find_vertice_by_geocode(*start, vertice->geocode);
@@ -200,6 +201,134 @@ void dijkstra(NODE* vertices, char geocodeInicio[TAM]) {
 	}
 }
 
+VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeFim[TAM]) {
+	NODE* verticeAtual = vertices;
+	VERTICE* vertice = NULL;
+	while (verticeAtual != NULL) {
+		vertice = (VERTICE*)verticeAtual->data;
+		if (strcmp(vertice->geocode, geocodeInicio) == 0) {
+			vertice->distancia = 0;
+		}
+		else {
+			vertice->distancia = INFINITO;
+		}
+		vertice->visitado = 0;
+		vertice->anterior = NULL;
+		verticeAtual = verticeAtual->next;
+	}
+
+	VERTICE* verticeFim = NULL;
+
+	while (1) {
+		verticeAtual = vertices;
+		VERTICE* verticeMenor = NULL;
+		while (verticeAtual != NULL) {
+			vertice = (VERTICE*)verticeAtual->data;
+			if (vertice->visitado == 0 && (verticeMenor == NULL || vertice->distancia < verticeMenor->distancia)) {
+				verticeMenor = vertice;
+			}
+			verticeAtual = verticeAtual->next;
+		}
+
+		if (verticeMenor == NULL) {
+			break;
+		}
+
+		verticeMenor->visitado = 1;
+
+		if (strcmp(verticeMenor->geocode, geocodeFim) == 0) {
+			verticeFim = verticeMenor;
+			break;
+		}
+
+		NODE* arestaAtual = verticeMenor->arestas;
+		while (arestaAtual != NULL) {
+			ARESTA* aresta = (ARESTA*)arestaAtual->data;
+			VERTICE* verticeDestino = find_vertice_by_geocode(vertices, aresta->geocode);
+			if (verticeDestino->visitado == 0 && verticeMenor->distancia + aresta->peso < verticeDestino->distancia) {
+				verticeDestino->distancia = verticeMenor->distancia + aresta->peso;
+				verticeDestino->anterior = verticeMenor;
+			}
+			arestaAtual = arestaAtual->next;
+		}
+	}
+
+	return verticeFim;
+}
+NODE* listar_meios_menos_50(NODE* vertices) {
+	NODE* meios_baixa_bateria_lista = NULL;
+	float volumeTotal = 0;  // Variável para controlar o volume total
+
+	// Iterar sobre a lista de vértices
+	while (vertices != NULL && volumeTotal <= VOLUME_MAX_CAMIAO) {
+		VERTICE* vertice = (VERTICE*)vertices->data;
+		NODE* meioAtual = vertice->meios;
+
+		// Iterar sobre a lista de meios em cada vértice
+		while (meioAtual != NULL && volumeTotal <= VOLUME_MAX_CAMIAO) {
+			MEIO* meio = (MEIO*)meioAtual->data;
+
+			// Se o meio tem menos de 50% de bateria e se couber no camião
+			if (meio->bateria < 50 && volumeTotal + meio->volume <= VOLUME_MAX_CAMIAO) {
+				volumeTotal += meio->volume;  // Atualiza o volume total
+
+				// Cria um novo nó e adiciona o meio à lista de meios com baixa bateria
+				NODE* novoMeio = (NODE*)malloc(sizeof(NODE));
+				novoMeio->data = meio;
+				novoMeio->next = meios_baixa_bateria_lista;
+				meios_baixa_bateria_lista = novoMeio;
+
+				// Interrompe a busca neste vértice assim que encontrar um meio com baixa bateria
+				break;
+			}
+
+			meioAtual = meioAtual->next;
+		}
+
+		vertices = vertices->next;
+	}
+
+	return meios_baixa_bateria_lista;
+}
+void recolha_meios(NODE* vertices, char geocodeInicio[TAM]) {
+	NODE* meios_baixa_bateria_lista = listar_meios_menos_50(vertices);
+
+	if (meios_baixa_bateria_lista == NULL) {
+		printf("Nenhum meio com bateria abaixo de 50%% encontrado.\n");
+		return;
+	}
+
+	float volumeTotal = 0;
+	NODE* meio_atual = meios_baixa_bateria_lista;
+
+	while (meio_atual != NULL && volumeTotal <= VOLUME_MAX_CAMIAO) {
+		MEIO* meio = (MEIO*)meio_atual->data;
+
+		if (volumeTotal + meio->volume <= VOLUME_MAX_CAMIAO) {
+			printf("Caminho para meio %d:\n", meio->codigo);
+			dijkstra_destino(vertices, geocodeInicio, meio->geocode);
+			printf("\n");
+
+			volumeTotal += meio->volume;
+		}
+		else {
+			printf("Camião cheio.\n");
+			break;
+		}
+
+		meio_atual = meio_atual->next;
+	}
+
+	// Limpa a lista de meios com baixa bateria
+	NODE* aux = meios_baixa_bateria_lista;
+	while (aux != NULL) {
+		NODE* temp = aux;
+		aux = aux->next;
+		free(temp);
+	}
+}
+
+
 int save_vertices(NODE* start) {
 	VERTICE* v = NULL;
 	NODE* aux, * a_aux = NULL;
@@ -352,8 +481,6 @@ void vertices_meios_txt(NODE* vertices) {
 	aux = vertices;
 	while (aux != NULL) {
 		vertice = (VERTICE*)aux->data;
-
-		//fprintf(fp, "%s;", vertice->geocode);
 
 		a_aux = vertice->meios;
 		while (a_aux != NULL) {

@@ -79,7 +79,7 @@ int login_menu(NODE* utilizadores, USER** auth) {
 }
 
 
-int menu_cliente(USER auth, NODE** utilizadores, NODE** meios , NODE** vertices) {
+int menu_cliente(USER auth, NODE** utilizadores, NODE** meios) {
     int escolha;
 
     do {
@@ -367,6 +367,7 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
     int escolha;
     char geocode[TAM];
     VERTICE* verticeEscolhido;
+    char geocodeInicio[TAM];
 
     do {
         clear_menu();
@@ -374,13 +375,14 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
         printf("|        MENU GERIR GRAFO      |\n");
         printf("+------------------------------+\n\n");
 
-        printf("[1] Adicionar Vertice\n");
+        printf("[1] Adicionar Vertice / Meio\n");
         printf("[2] Listar Vertices\n");
         printf("[3] Conectar Vertices\n");
         printf("[4] Desconectar Vertices\n");
         printf("[5] Gerir Meios correspondentes ao Vertice\n");
         printf("[6] Encontrar Caminho mais Curto entre Vertices\n");
-        printf("[7] Guardar Grafo\n");
+        printf("[7] Recolher Meios com Bateria <50%\n");
+        printf("[8] Guardar Grafo\n");
         printf("[0] Sair\n");
         printf("Opcao: ");
         scanf("%d", &escolha);
@@ -427,7 +429,15 @@ int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices) {
             any_key();
             break;
 
-         case 7:
+        
+        case 7: 
+            printf("Introduza o geocode inicial para a recolha: ");
+            scanf("%s", geocodeInicio);
+            recolher_meios_baixa_bateria(vertices, geocodeInicio);
+            any_key();
+            break;
+
+         case 8:
             guardar_vertices(*vertices);
             printf("Grafo guardado com sucesso!\n");
             any_key();
@@ -598,15 +608,22 @@ int criar_meio_e_vertice(NODE** vertices) {
         switch (tipo_escolha) {
         case 1:
             strcpy(meio->tipo, "Bicicleta");
+            meio->volume = 2;
             break;
+
         case 2:
             strcpy(meio->tipo, "Trotinete");
+            meio->volume = 2;
             break;
+
         case 3:
             strcpy(meio->tipo, "Mota");
+            meio->volume = 4;
             break;
+
         case 4:
             strcpy(meio->tipo, "Carro");
+            meio->volume = 6;
             break;
         default:
             printf("Escolha inválida! Por favor, tente novamente.\n");
@@ -725,15 +742,22 @@ int criar_meio_dentro_vertice(NODE** meios, NODE** vertices) {
         switch (tipo_escolha) {
         case 1:
             strcpy(meio->tipo, "Bicicleta");
+            meio->volume = 2;
             break;
+
         case 2:
             strcpy(meio->tipo, "Trotinete");
+            meio->volume = 2;
             break;
+
         case 3:
             strcpy(meio->tipo, "Mota");
+            meio->volume = 4;
             break;
+
         case 4:
             strcpy(meio->tipo, "Carro");
+            meio->volume = 6;
             break;
         default:
             printf("Escolha inválida! Por favor, tente novamente.\n");
@@ -983,24 +1007,27 @@ void listar_meios_vertice_geocode(NODE* vertices) {
             while (aux_meio != NULL) {
                 meio = (MEIO*)aux_meio->data;
 
-                printf("Codigo: %d\n", meio->codigo);
-                printf("Tipo: %s\n", meio->tipo);
-                printf("Autonomia: %.2f\n", meio->autonomia);
-                printf("Custo: %.2f\n", meio->custo);
-                printf("Localizacao: %s\n", meio->geocode);
-                printf("Latitude: %lf\n", meio->latitude);
-                printf("Longitude: %lf\n", meio->longitude);
-                printf("------------------------\n");
+                if (meio->status == 0) { // Verifica se o meio está disponível para aluguel
+                    printf("Codigo: %d\n", meio->codigo);
+                    printf("Tipo: %s\n", meio->tipo);
+                    printf("Autonomia: %.2f\n", meio->autonomia);
+                    printf("Custo: %.2f\n", meio->custo);
+                    printf("Localizacao: %s\n", meio->geocode);
+                    printf("Latitude: %lf\n", meio->latitude);
+                    printf("Longitude: %lf\n", meio->longitude);
+                    printf("------------------------\n");
+
+                    encontrou = 1;
+                }
 
                 aux_meio = aux_meio->next;
             }
-            encontrou = 1;
         }
 
         aux = aux->next;
     }
     if (!encontrou) {
-        printf("Nao foram encontrados meios de mobilidade nessa localizacao.\n");
+        printf("Nao foram encontrados meios de mobilidade disponiveis nessa localizacao.\n");
     }
 }
 void listar_vertices_existentes(NODE* vertices) {
@@ -1760,3 +1787,47 @@ void encontrar_caminho_mais_curto(NODE** vertices) {
     printf("\n");
 }
 
+void recolher_meios_baixa_bateria(NODE** vertices, char geocodeInicio[TAM]) {
+    printf(" A iniciar a recolha de meios com bateria abaixo de 50%%...\n");
+
+    // Obter a lista de meios com menos de 50% de bateria.
+    NODE* meios_baixa_bateria_lista = listar_meios_menos_50(*vertices);
+    NODE* aux = meios_baixa_bateria_lista;  // Guardar o início da lista
+
+    if (meios_baixa_bateria_lista == NULL) {
+        printf("Nao existem meios com bateria abaixo de 50%%\n");
+        return;
+    }
+
+    float volumeTotal = 0; // Inicializar o volume total do camião.
+
+    // Percorrer a lista de meios com bateria baixa, e enquanto o volume do camião permitir.
+    while (meios_baixa_bateria_lista != NULL && volumeTotal <= VOLUME_MAX_CAMIAO) {
+        MEIO* meio = (MEIO*)meios_baixa_bateria_lista->data;
+
+        // Verificar se o volume do meio cabe no camião.
+        if (volumeTotal + meio->volume <= VOLUME_MAX_CAMIAO) {
+            // Adicionar o volume do meio ao volume total do camião.
+            volumeTotal += meio->volume;
+
+            // Imprimir o caminho do ponto inicial ao meio.
+            dijkstra_destino(*vertices, geocodeInicio, meio->geocode);
+
+            // Atualizar o ponto inicial para o ponto de destino.
+            strcpy(geocodeInicio, meio->geocode);
+        }
+
+        meios_baixa_bateria_lista = meios_baixa_bateria_lista->next;
+    }
+
+    // Imprimir o caminho de volta ao ponto de partida inicial.
+    VERTICE* inicio = find_vertice_by_geocode(*vertices, geocodeInicio);
+    dijkstra_destino(*vertices, inicio->geocode, geocodeInicio);
+
+    // Limpar a lista de meios com bateria abaixo de 50%.
+    while (aux != NULL) {
+        NODE* temp = aux;
+        aux = aux->next;
+        free(temp);
+    }
+}
