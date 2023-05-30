@@ -1,4 +1,9 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/**
+ * @file grafo.h
+ * @brief Este arquivo contém funções relacionadas à manipulação de grafos e leitura/gravação de dados em arquivos.
+ */
+
+#define _CRT_SECURE_NO_WARNINGS
 #pragma once
 
 #include "meio.h"
@@ -100,17 +105,59 @@ int remover_aresta(NODE* vertices, char origem[], char destino[]);
  */
 void dijkstra(NODE* vertices, char geocodeInicio[TAM]); 
 
+/**
+ * @brief Função para encontrar o caminho mais curto entre dois vértices usando o algoritmo de Dijkstra.
+ * @param vertices A lista de vértices do grafo.
+ * @param geocodeInicio O código geográfico de origem.
+ * @param geocodeDestino O código geográfico de destino.
+ * @return Um ponteiro para o vértice de destino que representa o caminho mais curto.
+ */
 VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeFim[TAM]); 
 
+/**
+ * @brief Função para listar os meios com menos de 50% de bateria e que podem caber no caminhão.
+ * @param vertices A lista de vértices do grafo.
+ * @return Um ponteiro para a lista de nós contendo os meios com baixa bateria.
+ */
 NODE* listar_meios_menos_50(NODE* vertices); 
 
+/**
+ * @brief Função para realizar a recolha dos meios com baixa bateria a partir de um vértice de origem.
+ * @param vertices A lista de vértices do grafo.
+ * @param geocodeInicio O código geográfico de origem.
+ */
 void recolha_meios(NODE* vertices, char geocodeInicio[TAM]);
 
 /**
- * @brief Funções responsáveis por guardar os vértices.
+ * @brief Função para salvar os vértices e seus dados em um arquivo binário.
+ * @param start O nó inicial da lista de vértices.
+ * @return 0 em caso de sucesso~.
+ * @return -1 em caso de falha ao salvar o arquivo.
  */
 int save_vertices(NODE* start);
+
+/**
+ * @brief Função para carregar os vértices e seus dados a partir de um arquivo binário.
+ * @param vertices O ponteiro para a lista de vértices.
+ * @return 0 em caso de sucesso
+ * @return -3 em caso de falha ao abrir o arquivo.
+ */
 int load_vertices(NODE** vertices);
+
+/**
+ * @brief Função para salvar as arestas dos vértices em um arquivo de texto.
+ * @param vertices A lista de vértices do grafo.
+ */
 void vertices_arestas_txt(NODE* vertices);
+
+/**
+ * @brief Função para salvar os meios dos vértices em um arquivo de texto.
+ * @param vertices A lista de vértices do grafo.
+ */
 void vertices_meios_txt(NODE* vertices);
+
+/**
+ * @brief Função para guardar os vértices, as arestas e os meios em arquivos binários e de texto.
+ * @param vertices A lista de vértices do grafo.
+ */
 void guardar_vertices(NODE* vertices);

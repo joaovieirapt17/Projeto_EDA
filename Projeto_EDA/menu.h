@@ -1,3 +1,8 @@
+/**
+ * @file menu.h
+ * @brief Este arquivo contém as funções relacionadas ao menu e às operações do projeto.
+ */
+
 #define _CRT_SECURE_NO_WARNINGS
 #pragma once
 
@@ -26,8 +31,22 @@ void menu_gerir_clientes(USER auth, NODE** users);
 void menu_gerir_meios(USER auth, NODE** users, NODE** meios, NODE** vertices);
 int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices); 
 
-
+/**
+ * @brief Cria um novo gestor e adiciona à lista de utilizadores.
+ * @param users Ponteiro para a lista de utilizadores.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao adicionar o gestor.
+ * @return -3 se não houver memória disponível.
+ */
 int criar_gestor(NODE** users);
+
+/**
+ * @brief Cria um novo cliente e adiciona à lista de utilizadores.
+ * @param users Ponteiro para a lista de utilizadores.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao adicionar o cliente.
+ * @return -3 se não houver memória disponível.
+ */
 int criar_cliente(NODE** users);
 
 /**
@@ -143,11 +162,28 @@ void carregar_saldo(USER auth, NODE** utilizadores);
  */
 void encontrar_caminho_mais_curto(NODE** vertices); 
 
+/**
+ * @brief Cria um novo meio de mobilidade elétrica dentro de um vértice existente.
+ * @param meios Ponteiro para a lista de meios de mobilidade elétrica.
+ * @param vertices Ponteiro para a lista de vértices do grafo.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao criar o meio.
+ * @return -2 em caso de erro ao adicionar o meio ao vértice.
+ */
 int criar_meio_dentro_vertice(NODE** meios, NODE** vertices);
 
+/**
+ * @brief Lista todos os meios de mobilidade disponíveis em ordem decrescente de autonomia.
+ * @param vertices Ponteiro para a lista de vértices do grafo.
+ */
 void listar_todos_meios_disponiveis_decrescente_autonomia(NODE* vertices);
 
-void recolher_meios_baixa_bateria(NODE** vertices); 
+/**
+ * @brief Recolhe meios de mobilidade com baixa bateria em um determinado vértice.
+ * @param vertices Ponteiro para a lista de vértices do grafo.
+ * @param geocodeInicio O geocódigo do vértice onde a recolha deve ser realizada.
+ */
+void recolher_meios_baixa_bateria(NODE** vertices, char geocodeInicio[TAM]); 
 
 
 

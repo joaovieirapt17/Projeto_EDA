@@ -1,3 +1,7 @@
+/**
+ * @file meio.h
+ * @brief Este arquivo contém estruturas e funções relacionadas à manipulação de meios de mobilidade elétrica.
+ */
 #define _CRT_SECURE_NO_WARNINGS
 
 #pragma once
@@ -5,6 +9,9 @@
 #include "linkedlist.h"
 #include "grafo.h"
 
+ /**
+  * @brief Estrutura que representa um meio de mobilidade elétrica.
+  */
 typedef struct {
     int codigo;         // código do meio de mobilidade elétrica
     char tipo[50];      // Tipo de mobilidade elétrica

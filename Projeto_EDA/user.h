@@ -1,13 +1,24 @@
+/**
+ * @file user.h
+ * @brief Este arquivo contém estruturas e funções relacionadas à manipulação de utilizadores.
+ */
+
 #define _CRT_SECURE_NO_WARNINGS
 #pragma once
 
 #include "linkedlist.h"
 
+ /**
+  * @brief Representa a função de um utilizador (Cliente ou Gestor).
+  */
 typedef enum role {
     cliente = 0,
     gestor = 1
 }ROLE;
 
+/**
+ * @brief Estrutura que representa um utilizador.
+ */
 typedef struct user {
     char username[100];
     char password[100];

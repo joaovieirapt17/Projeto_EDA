@@ -201,7 +201,9 @@ void dijkstra(NODE* vertices, char geocodeInicio[TAM]) {
 	}
 }
 
-VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeFim[TAM]) {
+VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeDestino[TAM]) {
+	printf("Encontrando o caminho mais curto entre %s e %s...\n", geocodeInicio, geocodeDestino);
+
 	NODE* verticeAtual = vertices;
 	VERTICE* vertice = NULL;
 	while (verticeAtual != NULL) {
@@ -236,7 +238,7 @@ VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeF
 
 		verticeMenor->visitado = 1;
 
-		if (strcmp(verticeMenor->geocode, geocodeFim) == 0) {
+		if (strcmp(verticeMenor->geocode, geocodeDestino) == 0) {
 			verticeFim = verticeMenor;
 			break;
 		}
@@ -255,6 +257,7 @@ VERTICE* dijkstra_destino(NODE* vertices, char geocodeInicio[TAM], char geocodeF
 
 	return verticeFim;
 }
+
 NODE* listar_meios_menos_50(NODE* vertices) {
 	NODE* meios_baixa_bateria_lista = NULL;
 	float volumeTotal = 0;  // Variável para controlar o volume total
@@ -290,6 +293,8 @@ NODE* listar_meios_menos_50(NODE* vertices) {
 
 	return meios_baixa_bateria_lista;
 }
+
+
 void recolha_meios(NODE* vertices, char geocodeInicio[TAM]) {
 	NODE* meios_baixa_bateria_lista = listar_meios_menos_50(vertices);
 
@@ -486,7 +491,7 @@ void vertices_meios_txt(NODE* vertices) {
 		while (a_aux != NULL) {
 			meio = (MEIO*)a_aux->data;
 
-			fprintf(fp, "%s;%i,%lf,%lf\n", vertice->geocode, meio->codigo, meio->latitude, meio->longitude);
+			fprintf(fp, "%s;%i,%s,%f,%lf,%lf\n", vertice->geocode, meio->codigo, meio->tipo, meio->bateria, meio->latitude, meio->longitude);
 
 			a_aux = a_aux->next;
 		}

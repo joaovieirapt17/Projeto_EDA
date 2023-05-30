@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include "menu.h"
+#define VOLUME_MAX_CAMIAO 30
 
 void clear_menu() {
     system("cls");
@@ -1078,6 +1079,7 @@ void listar_vertices_existentes(NODE* vertices) {
 
                     printf("Codigo: %d\n", meio->codigo);
                     printf("Tipo: %s\n", meio->tipo);
+                    printf("Bateria: %f\n", meio->bateria);
                     printf("Autonomia: %.2f\n", meio->autonomia);
                     printf("Custo: %.2f\n", meio->custo);
                     printf("Latitude: %lf\n", meio->latitude);
@@ -1790,41 +1792,25 @@ void encontrar_caminho_mais_curto(NODE** vertices) {
 void recolher_meios_baixa_bateria(NODE** vertices, char geocodeInicio[TAM]) {
     printf(" A iniciar a recolha de meios com bateria abaixo de 50%%...\n");
 
-    // Obter a lista de meios com menos de 50% de bateria.
     NODE* meios_baixa_bateria_lista = listar_meios_menos_50(*vertices);
-    NODE* aux = meios_baixa_bateria_lista;  // Guardar o início da lista
 
     if (meios_baixa_bateria_lista == NULL) {
-        printf("Nao existem meios com bateria abaixo de 50%%\n");
+        printf("Nao existem meios com bateria abaixo de 50%\n");
         return;
     }
 
-    float volumeTotal = 0; // Inicializar o volume total do camião.
+    NODE* aux = meios_baixa_bateria_lista;  // Guardar o início da lista
 
-    // Percorrer a lista de meios com bateria baixa, e enquanto o volume do camião permitir.
-    while (meios_baixa_bateria_lista != NULL && volumeTotal <= VOLUME_MAX_CAMIAO) {
+    while (meios_baixa_bateria_lista != NULL) {
         MEIO* meio = (MEIO*)meios_baixa_bateria_lista->data;
 
-        // Verificar se o volume do meio cabe no camião.
-        if (volumeTotal + meio->volume <= VOLUME_MAX_CAMIAO) {
-            // Adicionar o volume do meio ao volume total do camião.
-            volumeTotal += meio->volume;
-
-            // Imprimir o caminho do ponto inicial ao meio.
-            dijkstra_destino(*vertices, geocodeInicio, meio->geocode);
-
-            // Atualizar o ponto inicial para o ponto de destino.
-            strcpy(geocodeInicio, meio->geocode);
-        }
-
+        dijkstra_destino(*vertices, geocodeInicio, meio->geocode);
         meios_baixa_bateria_lista = meios_baixa_bateria_lista->next;
     }
 
-    // Imprimir o caminho de volta ao ponto de partida inicial.
-    VERTICE* inicio = find_vertice_by_geocode(*vertices, geocodeInicio);
-    dijkstra_destino(*vertices, inicio->geocode, geocodeInicio);
+    printf("Finalizou a recolha de meios com bateria abaixo de 50%%\n");
 
-    // Limpar a lista de meios com bateria abaixo de 50%.
+    // Limpa a lista de meios com bateria abaixo de 50%
     while (aux != NULL) {
         NODE* temp = aux;
         aux = aux->next;

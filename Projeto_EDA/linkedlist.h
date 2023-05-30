@@ -3,8 +3,7 @@
  * @brief Definição e implementação de uma lista ligada genérica.
  *
  * Este ficheiro contém a definição e implementação de uma lista ligada genérica.
- * Cada elemento da lista é representado por um ponteiro genérico void* que pode ser
- * utilizado para armazenar qualquer tipo de dado.
+ * Cada elemento da lista é representado por um ponteiro genérico void* que pode ser utilizado para armazenar qualquer tipo de dado.
  */
 
 #define _CRT_SECURE_NO_WARNINGS
