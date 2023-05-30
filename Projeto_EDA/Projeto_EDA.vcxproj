@@ -141,6 +141,13 @@
     <ClInclude Include="menu.h" />
     <ClInclude Include="user.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="meios.txt" />
+    <Text Include="utilizadores.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

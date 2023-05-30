@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "meio.h"
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
 
 int add_meio(NODE** start, MEIO* meio) {
 	MEIO* result = find_meio_by_codigo(*start, meio->codigo);
@@ -93,9 +97,13 @@ int save_meios_txt(NODE* start) {
 		fprintf(fp, "Custo: %.2f\n", meio->custo);
 		fprintf(fp, "Geocode: ///%s\n", meio->geocode);
 		fprintf(fp, "Status: %d\n", meio->status);
+		fprintf(fp, "Latitude: %f\n", meio->latitude);
+		fprintf(fp, "Longitude: %f\n", meio->longitude);
 
 		aux = aux->next;
 	}
+
+	fclose(fp);
 
 	return 0;
 }
@@ -127,3 +135,27 @@ void guardar_meios(NODE* meios) {
 	save_meios(meios);
 	save_meios_txt(meios);
 }
+
+
+double graus_para_radianos(double graus) {
+	return graus * PI / 180.0;
+}
+
+
+double calcular_distancia(double lat1, double lon1, double lat2, double lon2) {
+	// Converte as coordenadas para radianos
+	lat1 = graus_para_radianos(lat1);
+	lon1 = graus_para_radianos(lon1);
+	lat2 = graus_para_radianos(lat2);
+	lon2 = graus_para_radianos(lon2);
+
+	// Calcula a distância entre os dois pontos usando a fórmula de Haversine
+	double dlat = lat2 - lat1;
+	double dlon = lon2 - lon1;
+	double a = pow(sin(dlat / 2), 2) + cos(lat1) * cos(lat2) * pow(sin(dlon / 2), 2);
+	double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+	double r = 6371; // raio médio da Terra em quilômetros
+
+	return c * r;
+}
+

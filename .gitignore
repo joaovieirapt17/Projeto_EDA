@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Projeto_EDA/meios.txt
+/Projeto_EDA/meios.dat

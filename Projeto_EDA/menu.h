@@ -1,43 +1,190 @@
-#define _CRT_SECURE_NO_WARNINGS
+/**
+ * @file menu.h
+ * @brief Este arquivo contém as funções relacionadas ao menu e às operações do projeto.
+ */
 
+#define _CRT_SECURE_NO_WARNINGS
 #pragma once
+
 #include "user.h"
 #include <conio.h>
 #include "meio.h"
+#include "grafo.h"
 
+/**
+ * @brief Limpa a consola.
+ */
 void clear_menu();
 
+/**
+ * @brief Aguarda o utilizador pressionar qualquer tecla antes de continuar.
+ */
 void any_key();
 
 
 int initial_menu(NODE* users, USER** auth);
 int login_menu(NODE* users, USER** auth);
-int menu_cliente(USER auth, NODE** users, NODE** meios);
-int menu_gestor(USER auth, NODE** users, NODE** meios);
+int menu_cliente(USER auth, NODE** users, NODE ** meios);
+int menu_gestor(USER auth, NODE** users, NODE** vertices);
 void menu_gerir_gestores(USER auth, NODE** users);
 void menu_gerir_clientes(USER auth, NODE** users);
-void menu_gerir_meios(USER auth, NODE** users, NODE** meios);
+void menu_gerir_meios(USER auth, NODE** users, NODE** meios, NODE** vertices);
+int menu_gerir_grafo(USER auth, NODE** utilizadores, NODE** vertices); 
 
-
+/**
+ * @brief Cria um novo gestor e adiciona à lista de utilizadores.
+ * @param users Ponteiro para a lista de utilizadores.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao adicionar o gestor.
+ * @return -3 se não houver memória disponível.
+ */
 int criar_gestor(NODE** users);
+
+/**
+ * @brief Cria um novo cliente e adiciona à lista de utilizadores.
+ * @param users Ponteiro para a lista de utilizadores.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao adicionar o cliente.
+ * @return -3 se não houver memória disponível.
+ */
 int criar_cliente(NODE** users);
-int criar_meio(NODE** meios);
 
+/**
+ * Cria um novo meio de mobilidade elétrica e um novo vértice (se necessário) e adiciona o meio à lista de meios do vértice.
+ * @param vertices Ponteiro para o ponteiro da lista de vértices.
+ * @return  0 em caso de sucesso na criação do meio e vértice.
+ * @return -1 se o meio não pôde ser adicionado.
+ * @return -2 se houve erro ao adicionar o vértice.
+ * @return -3 se houve erro na alocação de memória para o meio.
+ * @return -4 se houve erro na alocação de memória para o vértice.
+ */
+int criar_meio_e_vertice(NODE** vertices);
+
+/**
+ * Liga dois vértices adicionando uma aresta entre eles.
+ * @param vertices Ponteiro para o ponteiro da lista de vértices.
+ * @return 0 em caso de sucesso na conexão dos vértices, -1 caso contrário.
+ */
+int ligar_vertices(NODE** vertices); 
+
+/**
+ * @brief Lista os gestores registados.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void listar_gestores_registados(NODE* users);
+
+/**
+ * @brief Lista os clientes registados.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void listar_clientes_registados(NODE* users);
-void listar_meios_disponiveis_desc_autonomia(NODE* meios);
 
+/**
+ * @brief Lista os meios de mobilidade disponíveis em ordem decrescente de autonomia.
+ * @param vertices A lista de vértices do grafo.
+ */
+void listar_meios_disponiveis_decrescente_autonomia(NODE* meios);
+
+/**
+ * @brief Lista os meios de mobilidade em um vértice com base em um geocódigo.
+ * @param vertices O ponteiro para o início da lista de vértices.
+ */
+void listar_meios_vertice_geocode(NODE* vertices); 
+
+/**
+ * @brief Altera os dados de um gestor.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void alterar_dados_gestor(NODE** users);
+
+/**
+ * @brief Altera os dados de um cliente.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void alterar_dados_cliente(NODE** users);
-void alterar_dados_meios(NODE** meios);
+
+/**
+ * @brief Altera os dados de um meio de mobilidade elétrica.
+ * @param vertices Ponteiro para a lista de vértices.
+ */
+void alterar_dados_meios(NODE** meios, NODE* vertices); 
+
+/**
+ * @brief Altera os dados do próprio cliente.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ * @param auth Utilizador autenticado.
+ */
 void alterar_dados_proprio_cliente(NODE** utilizadores, USER auth);
-void listar_meios_geocode(NODE* meios);
+
+/**
+ * Lista os meios disponíveis próximos à localização fornecida.
+ * @param vertices Ponteiro para a lista de vértices.
+ */
+void listar_meios_proximos(NODE* vertices); 
+
+/**
+*@brief Lista os vértices existentes e permite visualizar os meios de um vértice específico.
+* @param vertices O ponteiro para o início da lista de vértices.
+*/
+void listar_vertices_existentes(NODE* vertices);
+
+/**
+ * @brief Remove um cliente da lista de utilizadores.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void remover_cliente(NODE** utilizadores);
-void remover_meio(NODE** meios);
 
-void alugar_meio(NODE** meios, NODE** utilizadores, USER user);
+/**
+ * @brief Remove um meio de mobilidade do vértice.
+ * @param meios Ponteiro para a lista de meios. 
+ * @param vertices O ponteiro para a lista de vértices.
+ */
+void remover_meio(NODE** meios, NODE* vertices);
 
+/**
+ * @brief Aluga um meio de mobilidade.
+ * @param vertices Ponteiro para a lista de vértices.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ * @param auth O utilizador autenticado.
+ */
+void alugar_meio(NODE** vertices, NODE** utilizadores, USER user);
+
+/**
+ * @brief Carrega saldo na conta do utilizador.
+ * @param auth Utilizador autenticado.
+ * @param utilizadores Ponteiro para a lista de utilizadores.
+ */
 void carregar_saldo(USER auth, NODE** utilizadores);
+
+/**
+ * @brief Encontra o caminho mais curto entre dois vértices no grafo usando o algoritmo de Dijkstra.
+ * @param vertices Um ponteiro para o ponteiro do primeiro nó do grafo.
+ */
+void encontrar_caminho_mais_curto(NODE** vertices); 
+
+/**
+ * @brief Cria um novo meio de mobilidade elétrica dentro de um vértice existente.
+ * @param meios Ponteiro para a lista de meios de mobilidade elétrica.
+ * @param vertices Ponteiro para a lista de vértices do grafo.
+ * @return 0 em caso de sucesso.
+ * @return -1 em caso de erro ao criar o meio.
+ * @return -2 em caso de erro ao adicionar o meio ao vértice.
+ */
+int criar_meio_dentro_vertice(NODE** meios, NODE** vertices);
+
+/**
+ * @brief Lista todos os meios de mobilidade disponíveis em ordem decrescente de autonomia.
+ * @param vertices Ponteiro para a lista de vértices do grafo.
+ */
+void listar_todos_meios_disponiveis_decrescente_autonomia(NODE* vertices);
+
+/**
+ * @brief Recolhe meios de mobilidade com baixa bateria em um determinado vértice.
+ * @param vertices Ponteiro para a lista de vértices do grafo.
+ * @param geocodeInicio O geocódigo do vértice onde a recolha deve ser realizada.
+ */
+void recolher_meios_baixa_bateria(NODE** vertices, char geocodeInicio[TAM]); 
+
 
 
 

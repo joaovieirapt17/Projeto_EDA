@@ -1,0 +1,14 @@
+----- UTILIZADOR -----
+Username: root
+Nome: root
+Email: root@root.com
+NIF: 0
+Saldo: 0.00
+Role: 1
+----- UTILIZADOR -----
+Username: cliente1
+Nome: Cliente 1
+Email: cliente1@gmail.com
+NIF: 269965122
+Saldo: 998.00
+Role: 0
