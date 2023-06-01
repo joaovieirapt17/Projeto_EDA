@@ -3,6 +3,7 @@
 #include <string.h>
 #include "menu.h"
 #define VOLUME_MAX_CAMIAO 30
+#define CUSTO_POR_KM 0.10
 
 void clear_menu() {
     system("cls");
@@ -66,7 +67,7 @@ int login_menu(NODE* utilizadores, USER** auth) {
         if (*auth == NULL) {
             do {
                 printf("----------------------------------\n");
-                printf(" Dados de autenticação inválidos! \n");
+                printf(" Dados de autenticacao invalidos! \n");
                 printf("----------------------------------\n\n");
                 printf("[1] Tenta Novamente!\n[0] Sair\n\nOpcao: ");
                 scanf("%d", &opc);
@@ -1227,6 +1228,7 @@ void listar_todos_meios_disponiveis_decrescente_autonomia(NODE* vertices) {
     for (i = 0; i < pos; i++) {
         temp = lista[i];
         printf("Codigo: %d\n", temp.codigo);
+        printf("Localizacao: %s\n", temp.geocode);
         printf("Tipo: %s\n", temp.tipo);
         printf("Autonomia: %.2f\n", temp.autonomia);
         printf("Custo: %.2f\n", temp.custo);
@@ -1656,6 +1658,8 @@ void remover_meio(NODE** meios, NODE* vertices) {
 void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
     int codigo;
     USER* user = NULL;
+    double destino_latitude, destino_longitude;
+    float distancia, custo_viagem;
 
     // Mostra o saldo do usuário
     printf("Saldo atual: %.2f\n\n", auth.saldo);
@@ -1665,6 +1669,15 @@ void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
 
     printf("Codigo do meio a alugar: ");
     scanf("%d", &codigo);
+    fflush(stdin);
+
+    printf("Introduza o destino:\n");
+    printf("  | Latitude: ");
+    scanf("%lf", &destino_latitude);
+    fflush(stdin);
+
+    printf("  | Longitude: ");
+    scanf("%lf", &destino_longitude);
     fflush(stdin);
 
     // Encontrar o meio pelo código nos vértices
@@ -1681,27 +1694,33 @@ void alugar_meio(NODE** vertices, NODE** utilizadores, USER auth) {
                     return;
                 }
 
+                // Calcula a distância entre a localização atual e a desejada
+                distancia = calcular_distancia(meio->latitude, meio->longitude, destino_latitude, destino_longitude);
+
+                // Calcular o custo da viagem
+                custo_viagem = distancia * CUSTO_POR_KM;
+
                 // Verificar se o usuário tem saldo suficiente
-                if (auth.saldo < meio->custo) {
+                if (auth.saldo < custo_viagem) {
                     printf("Saldo insuficiente para alugar este meio de mobilidade!\n");
                     return;
                 }
 
                 // Atualizar o saldo do usuário
                 user = find_user_by_username(*utilizadores, auth.username);
-                user->saldo -= meio->custo;
+                user->saldo -= custo_viagem;
 
                 // Atualizar o status do meio
                 meio->status = 1;
 
                 // Mostrar o sucesso do aluguel
                 printf("Meio de mobilidade alugado com sucesso!\n\n");
+                printf("Preco da Viagem: %.2f\n\n", custo_viagem);
                 printf("Novo saldo: %.2f\n", user->saldo);
 
                 // Salvar as alterações
                 guardar_users(*utilizadores);
                 guardar_vertices(*vertices);
-
                 return;
             }
             aux_meio = aux_meio->next;
@@ -1739,6 +1758,7 @@ void carregar_saldo(USER auth, NODE** utilizadores) {
     printf("\nSaldo atualizado com sucesso!\n");
     printf("Saldo atual: %.2f\n", saldo_atual);
 }
+
 
 void encontrar_caminho_mais_curto(NODE** vertices) {
     char geocodeInicio[TAM];
