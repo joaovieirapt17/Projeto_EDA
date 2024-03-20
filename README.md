@@ -1,20 +1,19 @@
-# Projeto_EDA
+# Smart City Mobility Management
 
-A essência deste projecto prende-se com o desenvolvimento de uma solução de software que permita agilizar a gestão (registo, partilha, utilização) de meios de mobilidade urbana num contexto de smart-city. A implementação da solução deverá considerar estruturas de dados dinâmicas, armazenamento de ficheiros, modularização e apresentar uma estruturação e documentação adequadas. Considerando dois tipos de utilizadores, nomeadamente gestores e clientes registados. 
+The essence of this project is the development of a software solution to streamline the management (registration, sharing, use) of urban mobility resources in a smart-city context. The implementation of the solution must take into account dynamic data structures, file storage, modularization and present appropriate structuring and documentation. Considering two types of users, namely managers and registered customers. 
 
-1ª Fase:
-1. Definição de uma estrutura de dados dinâmica (a ser previamente validada com o docente), para a representação dos meios de mobilidade eléctrica, clientes e gestores;
-2. Armazenamento/leitura de dados em ficheiro de texto (valores de simulação) e binário (preservar dados);
-3. Inserção de novos dados (cliente/gestor/meio de mobilidade eléctrica);
-4. Remoção de determinados dados (cliente/gestor/meio de mobilidade eléctrica);
-5. Modificação de determinados dados (cliente/gestor/modo de mobilidade eléctrica);
-6. Registo do aluguer de um determinado meio de mobilidade eléctrica;
-7. Listagem dos meios de mobilidade eléctrica por ordem decrescente de autonomia;
-8. Listagem dos meios de mobilidade eléctrica existentes num local com um determinado geocódigo.
+1st Phase:
+1. Definition of a dynamic data structure (to be validated in advance with the teacher) to represent the means of electric mobility, customers and managers;
+2. Storing/reading data in text files (simulation values) and binary files (preserving data);
+3. Inserting new data (customer/manager/electric mobility medium);
+4. Removing certain data (client/manager/electric mobility medium);
+5. Modifying certain data (client/manager/electric mobility mode);
+6. Registering the rental of a particular means of electric mobility;
+7. Listing the means of electric mobility in descending order of autonomy;
+8. Listing of existing electric mobility vehicles in a location with a given geocode.
 
 
-2ª Fase: 
-1. Definição de uma estrutura de dados dinâmica para representar a localização de um conjunto de clientes e meios de mobilidade eléctrica, utilizando um grafo;
-2. Armazenamento/leitura dos dados em ficheiros de texto (valores de simulação) e binários (preservar dados).
-Dada a localização de um cliente, listar os meios de mobilidade eléctrica de um determinado tipo existentes num determinado raio;
-3. Calcular uma solução (adaptação do problema do caixeiro viajante) da rota com a menor distância a percorrer, utilizando um camião, para recolher todos os meios de mobilidade eléctrica com carga de bateria inferior a 50%. O ponto de partida e de chegada é o mesmo. A capacidade de transporte do camião é limitada e dependente dos tipos de meios de mobilidade transportados, pelo que poderá ser necessário efectuar vários circuitos para completar a recolha destes meios de mobilidade eléctrica.
+Stage 2: 
+1. Definition of a dynamic data structure to represent the location of a set of customers and means of electric mobility, using a graph;
+2. Storing/reading the data in text files text (simulation values) and binary (preserve data). Given the location of a customer, list the means of electric mobility of a given type that exist within a given radius;
+3. Calculate a solution (adaptation of the traveling salesman problem) of the route with the shortest distance to travel, using a truck, to collect all the means of electric mobility with a battery charge of less than 50%. The point of departure and arrival are the same. The truck's transport capacity is limited and depends on the types of mobility equipment being transported, so it may be necessary to make several circuits to complete the collection of these electric mobility equipment.
